@@ -1,5 +1,9 @@
 package pl.radeko.scoreapp.manager;
 
+/**
+ * All services to work with results repository.
+ */
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -44,6 +48,10 @@ public class ResultManager {
         return resultRepository.findAllByGroup(group);
     }
 
+    /**
+     * Simple function to check, witch team won match.
+     * Gives 3 points for win, 2 for draw and 0 for lost.
+     */
     private int checkWin(int goalRatio) {
         if(goalRatio>0) {
             return 3;
@@ -55,19 +63,23 @@ public class ResultManager {
         }
     }
 
+    /**
+     * Creates related records in the Results database from the given team database.
+     * All teams must be created.
+     */
+    public void createGroupResults(TeamRepository teamRepository) {
 
-    public boolean createGroupResults(TeamRepository teamRepository) {
+        if(teamRepository.count() == numberOfTeams) {
+            List<Team> teams = StreamSupport.stream(teamRepository.findAll().spliterator(), false)
+                    .collect(Collectors.toList());
 
-        List<Team> teams = StreamSupport.stream(teamRepository.findAll().spliterator(), false)
-                .collect(Collectors.toList());
-
-        teams.stream().forEach(t -> {
-            Result temp = new Result();
-            temp.setTeam(t);
-            temp.setGroup(t.getGroup());
-            save(temp);
-        });
-        return true;
+            teams.stream().forEach(t -> {
+                Result temp = new Result();
+                temp.setTeam(t);
+                temp.setGroup(t.getGroup());
+                save(temp);
+            });
+        }
     }
 
     public void updateResult(Matchup matchup) {
@@ -100,6 +112,9 @@ public class ResultManager {
         resultRepository.save(result);
     }
 
+    /**
+     * Updates result of first team from given matchup.
+     */
     private Result updateResultA(Matchup matchup) {
 
         Result temp = new Result();
@@ -117,6 +132,9 @@ public class ResultManager {
         return temp;
     }
 
+    /**
+     * Updates result of second team from given matchup.
+     */
     private Result updateResultB(Matchup matchup) {
 
         Result temp = new Result();
@@ -134,6 +152,10 @@ public class ResultManager {
         return temp;
     }
 
+    /**
+     * Function allocating places for teams in the group specified at the entrance.
+     * Places are allocated according to the rules given in the text.
+     */
     private void setPlaceInGroup(Group group) {
 
         List<Result> results = StreamSupport.stream(resultRepository.findAllByGroup(group).spliterator(), false)

@@ -1,5 +1,9 @@
 package pl.radeko.scoreapp.manager;
 
+/**
+ * All services to work with team repository.
+ */
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -56,6 +60,10 @@ public class TeamManager {
         teamRepository.save(teamRepository.findById(id).get());
     }
 
+    /**
+     * A function for filling the base with default teams.
+     * It does not overwrite already created teams.
+     */
     public void saveDefaultTeams() {
 
         for (int i = (int) teamRepository.count() + 1; i <= numberOfTeams; i++) {
@@ -65,6 +73,10 @@ public class TeamManager {
         }
     }
 
+    /**
+     * A function used to draw teams to individual groups.
+     * Overwrites the Group field for all teams in the base.
+     */
     public void drawGroups() {
         if (teamRepository.count() == numberOfTeams) {
 
@@ -75,6 +87,10 @@ public class TeamManager {
         }
     }
 
+    /**
+     * A function for shuffling elements in the list given at the input.
+     * @param teams Should be a List of all teams in database.
+     */
     private List<Team> shuffleList(List<Team> teams) {
         int currentGroup = -1;
         Group[] groups = Group.values();

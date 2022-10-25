@@ -7,8 +7,12 @@ import pl.radeko.scoreapp.manager.ResultManager;
 import pl.radeko.scoreapp.manager.TeamManager;
 import pl.radeko.scoreapp.repository.entity.Matchup;
 import pl.radeko.scoreapp.repository.enums.MatchupType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
-@RestController
+@Controller
 @RequestMapping("/api/matchups")
 public class MatchupApi {
 
@@ -21,6 +25,13 @@ public class MatchupApi {
         this.matchups = matchups;
         this.teams = teams;
         this.results = results;
+    }
+
+    @GetMapping("/index")
+    public String home(Model model) {
+        model.addAttribute("name","Radek");
+        // return view name
+        return "matchuppage";
     }
 
     @GetMapping("/all")

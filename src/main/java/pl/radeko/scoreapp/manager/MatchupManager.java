@@ -1,5 +1,9 @@
 package pl.radeko.scoreapp.manager;
 
+/**
+ * All services to work with matchups repository.
+ */
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,7 +16,6 @@ import pl.radeko.scoreapp.repository.enums.Group;
 import pl.radeko.scoreapp.repository.enums.MatchupType;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -150,6 +153,10 @@ public class MatchupManager {
             currentGroup++;
         }
     }
+    /**
+     *
+     *
+     * */
 
     public void createPhase2AndHigherMatchups(MatchupType previousPhase, MatchupType currentPhase) {
 
