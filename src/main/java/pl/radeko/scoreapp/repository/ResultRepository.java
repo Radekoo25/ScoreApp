@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface ResultRepository extends CrudRepository<Result, Long> {
+    List<Result> findAllByGroupOrderByPlace(Group group);
     List<Result> findAllByGroup(Group group);
     Result findByGroupAndPlace(Group group, int place);
 

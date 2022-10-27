@@ -34,9 +34,11 @@ public class Team {
     public Team(String name, String description) {
         this.name = name;
         this.description = description;
+        this.group = null;
     }
 
     public Team() {
+        this.group = null;
     }
 
     public Long getId() {

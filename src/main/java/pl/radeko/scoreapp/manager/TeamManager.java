@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import pl.radeko.scoreapp.manager.ImageUtility.ImageUtils;
 import pl.radeko.scoreapp.repository.TeamRepository;
 import pl.radeko.scoreapp.repository.entity.Matchup;
 import pl.radeko.scoreapp.repository.entity.Team;
@@ -56,8 +57,21 @@ public class TeamManager {
 
     public void uploadTeamPhoto(Long id, MultipartFile file) throws IOException {
 
-        teamRepository.findById(id).get().setPhoto(file.getBytes());
-        teamRepository.save(teamRepository.findById(id).get());
+        Team team = teamRepository.findById(id).get();
+        team.setPhoto(ImageUtils.compressImage(file.getBytes()));
+
+        if (team.getPhoto() != null) {
+            teamRepository.save(team);
+            //return "file uploaded successfully : " + file.getOriginalFilename();
+        }
+        //return null;
+    }
+
+    public byte[] downloadPhoto(Long id){
+
+        Optional<Team> team = teamRepository.findById(id);
+        byte[] photo = team.get().getPhoto();
+        return photo;
     }
 
     public void updateTeamDescription(Long id, String description) {

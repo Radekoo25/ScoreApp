@@ -11,29 +11,38 @@ public class Result {
     @Column(name="result_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @OneToOne
-    @JoinColumn(name = "team")
-    private Team team;
-    @Column(name="points")
-    private int points;
-    @Column(name="goals_scored")
-    private int goals_scored;
-    @Column(name="goals_lost")
-    private int goals_lost;
     @Column(name="division")
     private Group group;
     @Column(name ="place")
     private int place;
+    @OneToOne
+    @JoinColumn(name = "team")
+    private Team team;
+    @Column(name="wins")
+    private int wins;
+    @Column(name="draws")
+    private int draws;
+    @Column(name="lost")
+    private int lost;
+    @Column(name="goals_scored")
+    private int goals_scored;
+    @Column(name="goals_lost")
+    private int goals_lost;
+    @Column(name="points")
+    private int points;
 
-    public Result(Team team, int points, int goals_scored, int goals_lost, Group group, int place) {
-        this.team = team;
-        this.points = points;
-        this.goals_scored = goals_scored;
-        this.goals_lost = goals_lost;
+    public Result(Group group, int place, Team team, int wins, int draws, int lost, int goals_scored, int goals_lost, int points) {
         this.group = group;
         this.place = place;
+        this.team = team;
+        this.wins = wins;
+        this.draws = draws;
+        this.lost = lost;
+        this.goals_scored = goals_scored;
+        this.goals_lost = goals_lost;
+        this.points = points;
     }
+
 
     public Result() {
     }
@@ -46,6 +55,22 @@ public class Result {
         this.id = id;
     }
 
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
+    public int getPlace() {
+        return place;
+    }
+
+    public void setPlace(int place) {
+        this.place = place;
+    }
+
     public Team getTeam() {
         return team;
     }
@@ -54,12 +79,28 @@ public class Result {
         this.team = team;
     }
 
-    public int getPoints() {
-        return points;
+    public int getWins() {
+        return wins;
     }
 
-    public void setPoints(int points) {
-        this.points = points;
+    public void setWins(int wins) {
+        this.wins = wins;
+    }
+
+    public int getDraws() {
+        return draws;
+    }
+
+    public void setDraws(int draws) {
+        this.draws = draws;
+    }
+
+    public int getLost() {
+        return lost;
+    }
+
+    public void setLost(int lost) {
+        this.lost = lost;
     }
 
     public int getGoals_scored() {
@@ -78,19 +119,27 @@ public class Result {
         this.goals_lost = goals_lost;
     }
 
-    public Group getGroup() {
-        return group;
+    public int getPoints() {
+        return points;
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
+    public void setPoints(int points) {
+        this.points = points;
     }
 
-    public int getPlace() {
-        return place;
-    }
-
-    public void setPlace(int place) {
-        this.place = place;
+    @Override
+    public String toString() {
+        return "Result{" +
+                "id=" + id +
+                ", group=" + group +
+                ", place=" + place +
+                ", team=" + team +
+                ", wins=" + wins +
+                ", draws=" + draws +
+                ", lost=" + lost +
+                ", goals_scored=" + goals_scored +
+                ", goals_lost=" + goals_lost +
+                ", points=" + points +
+                '}';
     }
 }

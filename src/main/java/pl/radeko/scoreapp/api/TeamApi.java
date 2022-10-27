@@ -29,6 +29,7 @@ public class TeamApi {
 
     @Autowired
     public TeamApi(TeamManager teams, ResultManager results, MatchupManager matchups) {
+
         this.teams = teams;
         this.results = results;
         this.matchups = matchups;
@@ -38,58 +39,62 @@ public class TeamApi {
     public String home(Model model) {
 
         model.addAttribute("teams", teams.findAll());
-
         return "teams_index";
     }
 
+    @GetMapping("/team/add")
+    public String prepareNewTeam(Model model) {
+
+        model.addAttribute("team", new Team());
+        return "addNewTeam";
+    }
+
+    @PostMapping("/team/add")
+    public RedirectView addTeam(@ModelAttribute Team team) {
+
+        teams.save(team);
+        return new RedirectView("/api/teams/index");
+    }
+
     @PostMapping("/team/update/{id}")
-    public String prepareMatchupForUpdate(@PathVariable Long id, Model model) {
+    public String prepareTeamForUpdate(@PathVariable Long id, Model model) {
+
         model.addAttribute("team", teams.findTeamById(id).get());
         return "updateTeam";
     }
 
-    @PostMapping("/matchup/update/save/{id}")
-    public RedirectView updateMatchup(@PathVariable Long id, @ModelAttribute("matchup") Matchup matchup) {
-        matchups.updateMatchup(id, matchup.getTeamA_score(), matchup.getTeamB_score(), results.getResultRepository());
-        results.updateResult(matchups.getMatchupRepository().findById(id).get());
-        return new RedirectView("/api/matchups/index");
+    @PostMapping("/team/update/save/{id}")
+    public RedirectView updateTeam(@PathVariable Long id, @ModelAttribute Team team) {
+
+        teams.updateTeamDescription(id, team.getDescription());
+        return new RedirectView("/api/teams/index");
     }
 
-    @GetMapping("/all")
-    public Iterable<Team> getAll() {return teams.findAll();}
+    @PostMapping("/filldefault")
+    public RedirectView saveDefaultTeams() {
 
-    @PostMapping("/addteam")
-    public void addTeam(@RequestBody Team team) {teams.save(team);}
+        teams.saveDefaultTeams();
+        return new RedirectView("/api/teams/index");
+    }
 
-    @PutMapping("/filldefault")
-    public void saveDefaultTeams() {teams.saveDefaultTeams();}
+    @PostMapping("/drawgroups")
+    public RedirectView drawGroups() {
 
-    @PutMapping("/drawgroups")
-    public void drawGroups() {
         teams.drawGroups();
         results.createGroupResults(teams.getTeamRepository());
         matchups.createGroupMatchups(teams.getTeamRepository());
+        return new RedirectView("/api/teams/index");
     }
 
     @PostMapping("/updatedescription/{id}")
     public void updateTeamDescription(@PathVariable Long id, @RequestParam String description) {
+
         teams.updateTeamDescription(id, description);
     }
 
     @PostMapping("/uploadphoto/{id}")
     public void uploadTeamPhoto(@PathVariable Long id, @RequestParam("File") MultipartFile file) throws IOException {
+
         teams.uploadTeamPhoto(id, file);
-    }
-
-    @GetMapping("/group/{id}")
-    public Iterable<Result> getResultsByGroup(@PathVariable int id) {
-        Group[] groups = Group.values();
-        return results.findAllByGroup(groups[id]);
-    }
-
-    @GetMapping("/phase/{id}")
-    public Iterable<Matchup> getMatchupsByType(@PathVariable int id) {
-        MatchupType[] matchupTypes = MatchupType.values();
-        return matchups.findAllByMatchupType(matchupTypes[id]);
     }
 }

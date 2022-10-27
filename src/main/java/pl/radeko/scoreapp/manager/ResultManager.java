@@ -46,7 +46,8 @@ public class ResultManager {
     }
 
     public Iterable<Result> findAllByGroup(Group group) {
-        return resultRepository.findAllByGroup(group);
+
+        return resultRepository.findAllByGroupOrderByPlace(group);
     }
 
     /**
@@ -114,15 +115,32 @@ public class ResultManager {
 
         Result temp = new Result();
 
+        int goalRatioInMatchup = matchup.getTeamA_score()-matchup.getTeamB_score();
+        int actualPoints = resultRepository.findById(matchup.getTeamA().getId()).get().getPoints();
+        int actualGoalScored = resultRepository.findById(matchup.getTeamA().getId()).get().getGoals_scored();
+        int actualGoalLost = resultRepository.findById(matchup.getTeamA().getId()).get().getGoals_lost();
+        int actualLost = resultRepository.findById(matchup.getTeamA().getId()).get().getLost();
+        int actualDraws = resultRepository.findById(matchup.getTeamA().getId()).get().getDraws();
+        int actualWins = resultRepository.findById(matchup.getTeamA().getId()).get().getWins();
+
         temp.setId(matchup.getTeamA().getId());
-        temp.setTeam(matchup.getTeamA());
         temp.setGroup(matchup.getTeamA().getGroup());
-        temp.setPoints(checkWin(matchup.getTeamA_score()-matchup.getTeamB_score())+
-                resultRepository.findById(matchup.getTeamA().getId()).get().getPoints());
-        temp.setGoals_scored(matchup.getTeamA_score()+
-                resultRepository.findById(matchup.getTeamA().getId()).get().getGoals_scored());
-        temp.setGoals_lost(matchup.getTeamB_score()+
-                resultRepository.findById(matchup.getTeamA().getId()).get().getGoals_lost());
+        temp.setTeam(matchup.getTeamA());
+        temp.setWins(actualWins);
+        temp.setDraws(actualDraws);
+        temp.setLost(actualLost);
+        temp.setPoints(checkWin(goalRatioInMatchup) + actualPoints);
+        temp.setGoals_scored(matchup.getTeamA_score() + actualGoalScored);
+        temp.setGoals_lost(matchup.getTeamB_score() + actualGoalLost);
+
+        if(goalRatioInMatchup > 0) {
+            temp.setWins(actualWins + 1);
+        } else if (goalRatioInMatchup == 0) {
+            temp.setDraws(actualDraws + 1);
+        }
+        else {
+            temp.setLost(actualLost + 1);
+        }
 
         return temp;
     }
@@ -134,15 +152,33 @@ public class ResultManager {
 
         Result temp = new Result();
 
+        int goalRatioInMatchup = matchup.getTeamB_score()-matchup.getTeamA_score();
+        int actualPoints = resultRepository.findById(matchup.getTeamB().getId()).get().getPoints();
+        int actualGoalScored = resultRepository.findById(matchup.getTeamB().getId()).get().getGoals_scored();
+        int actualGoalLost = resultRepository.findById(matchup.getTeamB().getId()).get().getGoals_lost();
+        int actualLost = resultRepository.findById(matchup.getTeamB().getId()).get().getLost();
+        int actualDraws = resultRepository.findById(matchup.getTeamB().getId()).get().getDraws();
+        int actualWins = resultRepository.findById(matchup.getTeamB().getId()).get().getWins();
+
         temp.setId(matchup.getTeamB().getId());
-        temp.setTeam(matchup.getTeamB());
         temp.setGroup(matchup.getTeamB().getGroup());
-        temp.setPoints(checkWin(matchup.getTeamB_score()-matchup.getTeamA_score())+
-                resultRepository.findById(matchup.getTeamB().getId()).get().getPoints());
-        temp.setGoals_scored(matchup.getTeamB_score()+
-                resultRepository.findById(matchup.getTeamB().getId()).get().getGoals_scored());
-        temp.setGoals_lost(matchup.getTeamA_score()+
-                resultRepository.findById(matchup.getTeamB().getId()).get().getGoals_lost());
+        temp.setTeam(matchup.getTeamB());
+        temp.setWins(actualWins);
+        temp.setDraws(actualDraws);
+        temp.setLost(actualLost);
+        temp.setPoints(checkWin(goalRatioInMatchup) + actualPoints);
+        temp.setGoals_scored(matchup.getTeamB_score() + actualGoalScored);
+        temp.setGoals_lost(matchup.getTeamA_score() + actualGoalLost);
+
+        if(goalRatioInMatchup > 0) {
+            temp.setWins(actualWins + 1);
+        }
+        else if (goalRatioInMatchup == 0) {
+            temp.setDraws(actualDraws + 1);
+        }
+        else {
+            temp.setLost(actualLost + 1);
+        }
 
         return temp;
     }

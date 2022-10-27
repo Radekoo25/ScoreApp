@@ -11,29 +11,77 @@
 </head>
 <body>
 
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="javascript:void(0)">ScoreApp</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mynavbar">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/api/teams/index}">Teams</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/api/matchups/index}">Matchups</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/api/results/index}">Groups</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Tools</a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <form class="dropdown-item" action="#" th:action="@{/api/teams/team/add}" th:method="get">
+                                <button class="btn btn-outline-dark">Add Team</button>
+                            </form>
+                        </li>
+                        <li>
+                            <form class="dropdown-item" action="#" th:action="@{/api/teams/filldefault}" th:method="post">
+                                <button class="btn btn-outline-dark">Default Teams</button>
+                            </form>
+                        </li>
+                        <li>
+                            <form class="dropdown-item" action="#" th:action="@{/api/teams/drawgroups}" th:method="post">
+                                <button class="btn btn-outline-dark">Draw groups</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<h1 class="text-center">Teams</h1>
+<h4 class="text-center">List of all teams.</h4>
+
 <div class="container mt-3">
     <!-- Teams -->
     <table class="table table-striped">
         <thead>
         <tr>
 
-            <th>Name</th>
-            <th>Description</th>
-            <th>Photo</th>
-            <th></th>
+            <th class="text-center">Name</th>
+            <th class="text-center">Description</th>
+            <th class="text-center">Group</th>
+            <th class="text-center">Photo</th>
+            <th class="text-center"></th>
 
         </tr>
         </thead>
         <tbody>
         <tr th:each="team: ${teams}">
 
-            <td th:text="${team.name}"></td>
-            <td th:text="${team.description}"></td>
-            <td th:text="${team.photo}"></td>
-            <td>
-                <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${team.id})}"
+            <td class="text-center" th:text="${team.name}"></td>
+            <td class="text-center" th:text="${team.description}"></td>
+            <td class="text-center" th:text="${team.group}"></td>
+            <td class="text-center"></td>
+            <td class="text-center">
+                <form action="#" th:action="@{'/api/teams/team/update/{id}'(id=${team.id})}"
                       th:object="${team}" th:method="post">
-                    <button>Result</button>
+                    <button>Update</button>
                 </form>
             </td>
         </tr>

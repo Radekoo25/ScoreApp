@@ -52,6 +52,8 @@ public class MatchupManager {
     private void save(Matchup matchup) {
 
         matchupRepository.save(matchup);
+        resultManager.updateResult(matchup);
+        checkIfPhaseIsComplete(resultManager.getResultRepository());
     }
 
     public Iterable<Matchup> findAll() {
@@ -66,21 +68,17 @@ public class MatchupManager {
         return matchupRepository.findById(id);
     }
 
-    public void updateMatchup(Long id, int teamA_score, int teamB_score, ResultRepository resultRepository) {
+    public void updateMatchup(Long id, int teamA_score, int teamB_score) {
 
         Matchup temp = matchupRepository.findById(id).get();
         if(temp.getTeamA_score()<0) {
             temp.setTeamA_score(teamA_score);
             temp.setTeamB_score(teamB_score);
             save(temp);
-
-            resultManager.updateResult(temp);
-
-            checkIfPhaseIsComplete(resultRepository);
         }
     }
 
-    public void saveDefaultGroupMatchups(ResultRepository resultRepository) {
+    public void saveDefaultMatchups() {
 
         Random random = new Random();
 
@@ -90,30 +88,10 @@ public class MatchupManager {
         matchups.stream().forEach(t -> {
             if (t.getTeamA_score() < 0) {
 
-                t.setTeamA_score(random.nextInt(max - min) + min);
-                t.setTeamB_score(random.nextInt(max - min) + min);
-                save(t);
-
-                resultManager.updateResult(t);
-            }
-        });
-        checkIfPhaseIsComplete(resultRepository);
-    }
-
-    public void saveDefaultPhaseMatchups(MatchupType matchupType, ResultRepository resultRepository) {
-
-        Random random = new Random();
-
-        List<Matchup> matchups = StreamSupport.stream(matchupRepository.findAllByMatchupType(matchupType).spliterator(), false)
-                .collect(Collectors.toList());
-
-        matchups.stream().forEach(t -> {
-            if (t.getTeamA_score() < 0) {
-
                 int scoreA = random.nextInt(max - min) + min;
                 int scoreB = random.nextInt(max - min) + min;
 
-                if (scoreA == scoreB) {
+                if (scoreA == scoreB && t.getMatchupType().ordinal() >= MatchupType.PHASE_1.ordinal()) {
                     scoreA++;
                 }
 
@@ -122,7 +100,6 @@ public class MatchupManager {
                 save(t);
             }
         });
-        checkIfPhaseIsComplete(resultRepository);
     }
 
     public void createGroupMatchups(TeamRepository teamRepository) {
@@ -213,8 +190,6 @@ public class MatchupManager {
                 numberOfCompletedMatchups++;
             }
         }
-
-        System.out.println("numberOfCompletedMatchups="+numberOfCompletedMatchups);
 
         if(numberOfCompletedMatchups == groupMatchups ) {
             createPhase1Matchups(resultRepository);
