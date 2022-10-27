@@ -1,8 +1,11 @@
 package pl.radeko.scoreapp.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.view.RedirectView;
 import pl.radeko.scoreapp.manager.MatchupManager;
 import pl.radeko.scoreapp.manager.ResultManager;
 import pl.radeko.scoreapp.manager.TeamManager;
@@ -16,7 +19,7 @@ import pl.radeko.scoreapp.repository.enums.MatchupType;
 import java.io.IOException;
 import java.util.Optional;
 
-@RestController
+@Controller
 @RequestMapping("/api/teams/")
 public class TeamApi {
 
@@ -29,6 +32,27 @@ public class TeamApi {
         this.teams = teams;
         this.results = results;
         this.matchups = matchups;
+    }
+
+    @GetMapping("/index")
+    public String home(Model model) {
+
+        model.addAttribute("teams", teams.findAll());
+
+        return "teams_index";
+    }
+
+    @PostMapping("/team/update/{id}")
+    public String prepareMatchupForUpdate(@PathVariable Long id, Model model) {
+        model.addAttribute("team", teams.findTeamById(id).get());
+        return "updateTeam";
+    }
+
+    @PostMapping("/matchup/update/save/{id}")
+    public RedirectView updateMatchup(@PathVariable Long id, @ModelAttribute("matchup") Matchup matchup) {
+        matchups.updateMatchup(id, matchup.getTeamA_score(), matchup.getTeamB_score(), results.getResultRepository());
+        results.updateResult(matchups.getMatchupRepository().findById(id).get());
+        return new RedirectView("/api/matchups/index");
     }
 
     @GetMapping("/all")
@@ -44,6 +68,7 @@ public class TeamApi {
     public void drawGroups() {
         teams.drawGroups();
         results.createGroupResults(teams.getTeamRepository());
+        matchups.createGroupMatchups(teams.getTeamRepository());
     }
 
     @PostMapping("/updatedescription/{id}")

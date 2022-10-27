@@ -7,34 +7,33 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
-    <title>Update matchup</title>
+    <title>Teams</title>
 </head>
 <body>
 
 <div class="container mt-3">
+    <!-- Teams -->
     <table class="table table-striped">
         <thead>
         <tr>
 
-            <th>First Team</th>
-            <th>Score</th>
-            <th>Score</th>
-            <th>Second Team</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Photo</th>
             <th></th>
 
         </tr>
         </thead>
         <tbody>
-        <tr>
+        <tr th:each="team: ${teams}">
 
-            <td th:text="${matchup.teamA.name}"></td>
-            <td><input type="number" min="0" max="100" th:field="*{matchup.teamA_score}" /></td>
-            <td><input type="number" min="0" max="100" th:field="*{matchup.teamB_score}" /></td>
-            <td th:text="${matchup.teamB.name}"></td>
+            <td th:text="${team.name}"></td>
+            <td th:text="${team.description}"></td>
+            <td th:text="${team.photo}"></td>
             <td>
-                <form action="#" th:action="@{'/api/matchups/matchup/update/save/{id}'(id=${matchup.id})}"
-                      th:object="${matchup}" th:method="post">
-                    <button>Save</button>
+                <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${team.id})}"
+                      th:object="${team}" th:method="post">
+                    <button>Result</button>
                 </form>
             </td>
         </tr>

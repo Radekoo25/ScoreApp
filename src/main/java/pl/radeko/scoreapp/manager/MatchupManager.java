@@ -16,6 +16,7 @@ import pl.radeko.scoreapp.repository.enums.Group;
 import pl.radeko.scoreapp.repository.enums.MatchupType;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -28,13 +29,20 @@ public class MatchupManager {
     @Value("${scoreapp.numberOfTeams}")
     public int numberOfTeams;
     private MatchupRepository matchupRepository;
+    private ResultManager resultManager;
     final private int max = 5;
     final private int min = 0;
+    final private int groupMatchups = 48;
+    final private int phase1Matchups = 8;
+    final private int phase2Matchups = 4;
+    final private int phase3Matchups = 2;
+    final private int phase4Matchups = 1;
 
     @Autowired
-    public MatchupManager(MatchupRepository matchupRepository) {
+    public MatchupManager(MatchupRepository matchupRepository, ResultManager resultManager) {
 
         this.matchupRepository = matchupRepository;
+        this.resultManager = resultManager;
     }
 
     public MatchupRepository getMatchupRepository() {
@@ -54,16 +62,25 @@ public class MatchupManager {
         return matchupRepository.findAllByMatchupType(matchupType);
     }
 
-    public void updateMatchup(Long id, int teamA_score, int teamB_score) {
-
-        Matchup temp = matchupRepository.findById(id).get();
-        temp.setTeamA_score(teamA_score);
-        temp.setTeamB_score(teamB_score);
-
-        save(temp);
+    public Optional<Matchup> findMatchupById(Long id) {
+        return matchupRepository.findById(id);
     }
 
-    public void saveDefaultGroupMatchups() {
+    public void updateMatchup(Long id, int teamA_score, int teamB_score, ResultRepository resultRepository) {
+
+        Matchup temp = matchupRepository.findById(id).get();
+        if(temp.getTeamA_score()<0) {
+            temp.setTeamA_score(teamA_score);
+            temp.setTeamB_score(teamB_score);
+            save(temp);
+
+            resultManager.updateResult(temp);
+
+            checkIfPhaseIsComplete(resultRepository);
+        }
+    }
+
+    public void saveDefaultGroupMatchups(ResultRepository resultRepository) {
 
         Random random = new Random();
 
@@ -76,11 +93,14 @@ public class MatchupManager {
                 t.setTeamA_score(random.nextInt(max - min) + min);
                 t.setTeamB_score(random.nextInt(max - min) + min);
                 save(t);
+
+                resultManager.updateResult(t);
             }
         });
+        checkIfPhaseIsComplete(resultRepository);
     }
 
-    public void saveDefaultPhaseMatchups(MatchupType matchupType) {
+    public void saveDefaultPhaseMatchups(MatchupType matchupType, ResultRepository resultRepository) {
 
         Random random = new Random();
 
@@ -102,6 +122,7 @@ public class MatchupManager {
                 save(t);
             }
         });
+        checkIfPhaseIsComplete(resultRepository);
     }
 
     public void createGroupMatchups(TeamRepository teamRepository) {
@@ -178,6 +199,34 @@ public class MatchupManager {
             temp.setTeamA(teamA1);
             temp.setTeamB(teamB1);
             matchupRepository.save(temp);
+        }
+    }
+
+    private void checkIfPhaseIsComplete(ResultRepository resultRepository) {
+
+        List<Matchup> matchups = StreamSupport.stream(matchupRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
+        int numberOfCompletedMatchups = 0;
+
+        for (int i=0; i<matchups.size(); i++) {
+            if (matchups.get(i).getTeamA_score() >= 0) {
+                numberOfCompletedMatchups++;
+            }
+        }
+
+        System.out.println("numberOfCompletedMatchups="+numberOfCompletedMatchups);
+
+        if(numberOfCompletedMatchups == groupMatchups ) {
+            createPhase1Matchups(resultRepository);
+        }
+        else if(numberOfCompletedMatchups == groupMatchups + phase1Matchups) {
+            createPhase2AndHigherMatchups(MatchupType.PHASE_1, MatchupType.PHASE_2);
+        }
+        else if(numberOfCompletedMatchups == groupMatchups + phase1Matchups + phase2Matchups) {
+            createPhase2AndHigherMatchups(MatchupType.PHASE_2, MatchupType.PHASE_3);
+        }
+        else if(numberOfCompletedMatchups == groupMatchups + phase1Matchups + phase2Matchups + phase3Matchups) {
+            createPhase2AndHigherMatchups(MatchupType.PHASE_3, MatchupType.PHASE_4);
         }
     }
 }

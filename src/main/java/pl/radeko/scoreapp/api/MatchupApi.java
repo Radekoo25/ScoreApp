@@ -27,74 +27,71 @@ public class MatchupApi {
         this.results = results;
     }
 
-    @GetMapping("/index")
-    public String home(Model model) {
-        model.addAttribute("name","Radek");
-        // return view name
-        return "matchuppage";
-    }
-
     @GetMapping("/all")
     public Iterable<Matchup> getAll() {
         return matchups.findAll();
     }
 
-    @PutMapping("/creategroupmatchups")
-    public void createGroupMatchups() {
+    @GetMapping("/index")
+    public String home(Model model) {
 
-        matchups.createGroupMatchups(teams.getTeamRepository());
+        model.addAttribute("group_a", matchups.findAllByMatchupType(MatchupType.GROUP_A));
+        model.addAttribute("group_b", matchups.findAllByMatchupType(MatchupType.GROUP_B));
+        model.addAttribute("group_c", matchups.findAllByMatchupType(MatchupType.GROUP_C));
+        model.addAttribute("group_d", matchups.findAllByMatchupType(MatchupType.GROUP_D));
+        model.addAttribute("group_e", matchups.findAllByMatchupType(MatchupType.GROUP_E));
+        model.addAttribute("group_f", matchups.findAllByMatchupType(MatchupType.GROUP_F));
+        model.addAttribute("group_g", matchups.findAllByMatchupType(MatchupType.GROUP_G));
+        model.addAttribute("group_h", matchups.findAllByMatchupType(MatchupType.GROUP_H));
+
+        model.addAttribute("phase_1", matchups.findAllByMatchupType(MatchupType.PHASE_1));
+        model.addAttribute("phase_2", matchups.findAllByMatchupType(MatchupType.PHASE_2));
+        model.addAttribute("phase_3", matchups.findAllByMatchupType(MatchupType.PHASE_3));
+        model.addAttribute("phase_4", matchups.findAllByMatchupType(MatchupType.PHASE_4));
+
+
+        return "matchups_index";
     }
 
-    @PutMapping("/completematchup/{id}")
-    public void updateMatchup(@PathVariable Long id, @RequestBody Matchup matchup) {
-        matchups.updateMatchup(id, matchup.getTeamA_score(), matchup.getTeamB_score());
+    @PostMapping("/matchup/update/{id}")
+    public String prepareMatchupForUpdate(@PathVariable Long id, Model model) {
+        model.addAttribute("matchup", matchups.findMatchupById(id).get());
+        return "updateMatchup";
+    }
+
+    @PostMapping("/matchup/update/save/{id}")
+    public RedirectView updateMatchup(@PathVariable Long id, @ModelAttribute("matchup") Matchup matchup) {
+        matchups.updateMatchup(id, matchup.getTeamA_score(), matchup.getTeamB_score(), results.getResultRepository());
         results.updateResult(matchups.getMatchupRepository().findById(id).get());
+        return new RedirectView("/api/matchups/index");
     }
 
     @PutMapping("/filldefaultgroupmatchups")
     public void saveDefaultGroupMatchups() {
-        matchups.saveDefaultGroupMatchups();
-        results.updateAllResults(matchups.getMatchupRepository());
-    }
-
-    @PutMapping("/createphaseone")
-    public void createPhase1Matchups() {
-        matchups.createPhase1Matchups(results.getResultRepository());
+        matchups.saveDefaultGroupMatchups(results.getResultRepository());
     }
 
     @PutMapping("/filldefaultphaseonematchups")
     public void saveDefaultPhase1Matchups() {
-        matchups.saveDefaultPhaseMatchups(MatchupType.PHASE_1);
+        matchups.saveDefaultPhaseMatchups(MatchupType.PHASE_1, results.getResultRepository());
     }
 
-    @PutMapping("/createquarterfinals")
-    public void createQuarterfinalMatchups() {
-        matchups.createPhase2AndHigherMatchups(MatchupType.PHASE_1, MatchupType.PHASE_2);
-    }
 
     @PutMapping("/filldefaultquarterfinals")
     public void saveDefaultQuarterfinalMatchups() {
-        matchups.saveDefaultPhaseMatchups(MatchupType.PHASE_2);
+        matchups.saveDefaultPhaseMatchups(MatchupType.PHASE_2, results.getResultRepository());
     }
 
-    @PutMapping("/createsemifinals")
-    public void createSemifinalMatchups() {
-        matchups.createPhase2AndHigherMatchups(MatchupType.PHASE_2, MatchupType.PHASE_3);
-    }
 
     @PutMapping("/filldefaultsemifinals")
     public void saveDefaultSemifinalMatchups() {
-        matchups.saveDefaultPhaseMatchups(MatchupType.PHASE_3);
+        matchups.saveDefaultPhaseMatchups(MatchupType.PHASE_3, results.getResultRepository());
     }
 
-    @PutMapping("/createfinal")
-    public void createFinalMatchup() {
-        matchups.createPhase2AndHigherMatchups(MatchupType.PHASE_3, MatchupType.PHASE_4);
-    }
 
     @PutMapping("/filldefaultfinal")
     public void saveDefaultFinalMatchup() {
-        matchups.saveDefaultPhaseMatchups(MatchupType.PHASE_4);
+        matchups.saveDefaultPhaseMatchups(MatchupType.PHASE_4, results.getResultRepository());
     }
 
 }

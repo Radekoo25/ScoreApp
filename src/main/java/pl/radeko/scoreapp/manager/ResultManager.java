@@ -14,6 +14,7 @@ import pl.radeko.scoreapp.repository.entity.Matchup;
 import pl.radeko.scoreapp.repository.entity.Result;
 import pl.radeko.scoreapp.repository.entity.Team;
 import pl.radeko.scoreapp.repository.enums.Group;
+import pl.radeko.scoreapp.repository.enums.MatchupType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -83,28 +84,22 @@ public class ResultManager {
     }
 
     public void updateResult(Matchup matchup) {
-        Result tempA = new Result();
-        Result tempB = new Result();
 
-        tempA = updateResultA(matchup);
-        tempB = updateResultB(matchup);
+        Group[] groups = Group.values();
 
-        save(tempA);
-        save(tempB);
+        if(matchup.getMatchupType().ordinal() < MatchupType.PHASE_1.ordinal())
+        {
+            Result tempA = new Result();
+            Result tempB = new Result();
 
-        setPlaceInGroup(tempA.getGroup());
-    }
+            tempA = updateResultA(matchup);
+            tempB = updateResultB(matchup);
 
-    public boolean updateAllResults(MatchupRepository matchupRepository) {
+            save(tempA);
+            save(tempB);
 
-        List<Matchup> matchups = StreamSupport.stream(matchupRepository.findAll().spliterator(), false)
-                .collect(Collectors.toList());
-
-        matchups.stream().forEach(t -> {
-                updateResult(t);
-        });
-
-        return true;
+            setPlaceInGroup(tempA.getGroup());
+        }
     }
 
     private void save(Result result) {

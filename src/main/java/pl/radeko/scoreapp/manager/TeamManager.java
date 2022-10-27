@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.radeko.scoreapp.repository.TeamRepository;
+import pl.radeko.scoreapp.repository.entity.Matchup;
 import pl.radeko.scoreapp.repository.entity.Team;
 import pl.radeko.scoreapp.repository.enums.Group;
 
@@ -40,6 +41,10 @@ public class TeamManager {
 
     public Iterable<Team> findAll() {
         return teamRepository.findAll();
+    }
+
+    public Optional<Team> findTeamById(Long id) {
+        return teamRepository.findById(id);
     }
 
     public void save(Team team) {
