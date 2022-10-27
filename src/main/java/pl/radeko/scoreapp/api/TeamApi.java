@@ -17,12 +17,16 @@ import pl.radeko.scoreapp.repository.enums.Group;
 import pl.radeko.scoreapp.repository.enums.MatchupType;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 @Controller
 @RequestMapping("/api/teams/")
 public class TeamApi {
 
+    public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
     private final TeamManager teams;
     private final ResultManager results;
     private final MatchupManager matchups;
@@ -93,8 +97,7 @@ public class TeamApi {
     }
 
     @PostMapping("/uploadphoto/{id}")
-    public void uploadTeamPhoto(@PathVariable Long id, @RequestParam("File") MultipartFile file) throws IOException {
-
+    public void uploadTeamPhoto(@PathVariable Long id, @RequestParam MultipartFile file) throws IOException {
         teams.uploadTeamPhoto(id, file);
     }
 }
