@@ -68,8 +68,14 @@
         <tr th:each="matchup: ${group_a}">
 
             <td class="text-center" th:text="${matchup.teamA.name}"></td>
-            <td class="text-center" th:text="${matchup.teamA_score}"></td>
-            <td class="text-center" th:text="${matchup.teamB_score}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
             <td class="text-center" th:text="${matchup.teamB.name}"></td>
             <td class="text-center">
                 <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
@@ -100,8 +106,14 @@
         <tr th:each="matchup: ${group_b}">
 
             <td class="text-center" th:text="${matchup.teamA.name}"></td>
-            <td class="text-center" th:text="${matchup.teamA_score}"></td>
-            <td class="text-center" th:text="${matchup.teamB_score}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
             <td class="text-center" th:text="${matchup.teamB.name}"></td>
             <td class="text-center">
                 <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
@@ -132,8 +144,14 @@
         <tr th:each="matchup: ${group_c}">
 
             <td class="text-center" th:text="${matchup.teamA.name}"></td>
-            <td class="text-center" th:text="${matchup.teamA_score}"></td>
-            <td class="text-center" th:text="${matchup.teamB_score}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
             <td class="text-center" th:text="${matchup.teamB.name}"></td>
             <td class="text-center">
                 <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
@@ -164,8 +182,14 @@
         <tr th:each="matchup: ${group_d}">
 
             <td class="text-center" th:text="${matchup.teamA.name}"></td>
-            <td class="text-center" th:text="${matchup.teamA_score}"></td>
-            <td class="text-center" th:text="${matchup.teamB_score}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
             <td class="text-center" th:text="${matchup.teamB.name}"></td>
             <td class="text-center">
                 <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
@@ -196,8 +220,14 @@
         <tr th:each="matchup: ${group_e}">
 
             <td class="text-center" th:text="${matchup.teamA.name}"></td>
-            <td class="text-center" th:text="${matchup.teamA_score}"></td>
-            <td class="text-center" th:text="${matchup.teamB_score}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
             <td class="text-center" th:text="${matchup.teamB.name}"></td>
             <td class="text-center">
                 <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
@@ -228,8 +258,14 @@
         <tr th:each="matchup: ${group_f}">
 
             <td class="text-center" th:text="${matchup.teamA.name}"></td>
-            <td class="text-center" th:text="${matchup.teamA_score}"></td>
-            <td class="text-center" th:text="${matchup.teamB_score}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
             <td class="text-center" th:text="${matchup.teamB.name}"></td>
             <td class="text-center">
                 <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
@@ -260,8 +296,14 @@
         <tr th:each="matchup: ${group_g}">
 
             <td class="text-center" th:text="${matchup.teamA.name}"></td>
-            <td class="text-center" th:text="${matchup.teamA_score}"></td>
-            <td class="text-center" th:text="${matchup.teamB_score}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
             <td class="text-center" th:text="${matchup.teamB.name}"></td>
             <td class="text-center">
                 <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
@@ -292,8 +334,14 @@
         <tr th:each="matchup: ${group_h}">
 
             <td class="text-center" th:text="${matchup.teamA.name}"></td>
-            <td class="text-center" th:text="${matchup.teamA_score}"></td>
-            <td class="text-center" th:text="${matchup.teamB_score}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
             <td class="text-center" th:text="${matchup.teamB.name}"></td>
             <td class="text-center">
                 <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
@@ -324,8 +372,14 @@
         <tr th:each="matchup: ${phase_1}">
 
             <td class="text-center" th:text="${matchup.teamA.name}"></td>
-            <td class="text-center" th:text="${matchup.teamA_score}"></td>
-            <td class="text-center" th:text="${matchup.teamB_score}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
             <td class="text-center" th:text="${matchup.teamB.name}"></td>
             <td class="text-center">
                 <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
@@ -356,8 +410,14 @@
         <tr th:each="matchup: ${phase_2}">
 
             <td class="text-center" th:text="${matchup.teamA.name}"></td>
-            <td class="text-center" th:text="${matchup.teamA_score}"></td>
-            <td class="text-center" th:text="${matchup.teamB_score}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
             <td class="text-center" th:text="${matchup.teamB.name}"></td>
             <td class="text-center">
                 <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
@@ -388,8 +448,14 @@
         <tr th:each="matchup: ${phase_3}">
 
             <td class="text-center" th:text="${matchup.teamA.name}"></td>
-            <td class="text-center" th:text="${matchup.teamA_score}"></td>
-            <td class="text-center" th:text="${matchup.teamB_score}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
             <td class="text-center" th:text="${matchup.teamB.name}"></td>
             <td class="text-center">
                 <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
@@ -420,8 +486,14 @@
         <tr th:each="matchup: ${phase_4}">
 
             <td class="text-center" th:text="${matchup.teamA.name}"></td>
-            <td class="text-center" th:text="${matchup.teamA_score}"></td>
-            <td class="text-center" th:text="${matchup.teamB_score}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
             <td class="text-center" th:text="${matchup.teamB.name}"></td>
             <td class="text-center">
                 <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"

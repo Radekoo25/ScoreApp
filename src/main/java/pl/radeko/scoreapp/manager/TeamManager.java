@@ -30,10 +30,13 @@ public class TeamManager {
     @Value("${scoreapp.numberOfTeams}")
     public int numberOfTeams;
     private TeamRepository teamRepository;
+    private ResultManager resultManager;
 
     @Autowired
-    public TeamManager(TeamRepository teamRepository) {
+    public TeamManager(TeamRepository teamRepository, ResultManager resultManager)
+    {
         this.teamRepository = teamRepository;
+        this.resultManager = resultManager;
     }
 
     public TeamRepository getTeamRepository() {
@@ -97,12 +100,13 @@ public class TeamManager {
      * Overwrites the Group field for all teams in the base.
      */
     public void drawGroups() {
-        if (teamRepository.count() == numberOfTeams) {
+        if (teamRepository.count() == numberOfTeams && resultManager.getResultRepository().count() == 0) {
 
             List<Team> teams = StreamSupport.stream(teamRepository.findAll().spliterator(), false)
                     .collect(Collectors.toList());
-            List<Team> newListOrder = shuffleList(teams);
-            updateTeamGroup(newListOrder);
+                List<Team> newListOrder = shuffleList(teams);
+                updateTeamGroup(newListOrder);
+
         }
     }
 

@@ -37,14 +37,6 @@ public class ResultManager {
         return resultRepository;
     }
 
-    public Iterable<Result> findAll() {
-        return resultRepository.findAll();
-    }
-
-    public Optional<Result> findAllById(Long id) {
-        return resultRepository.findById(id);
-    }
-
     public Iterable<Result> findAllByGroup(Group group) {
 
         return resultRepository.findAllByGroupOrderByPlace(group);
@@ -71,7 +63,7 @@ public class ResultManager {
      */
     public void createGroupResults(TeamRepository teamRepository) {
 
-        if(teamRepository.count() == numberOfTeams) {
+        if(teamRepository.count() == numberOfTeams && resultRepository.count() == 0) {
             List<Team> teams = StreamSupport.stream(teamRepository.findAll().spliterator(), false)
                     .collect(Collectors.toList());
 
@@ -83,7 +75,9 @@ public class ResultManager {
             });
         }
     }
-
+    /**
+     * Updating group results for two teams from given matchup.
+     */
     public void updateResult(Matchup matchup) {
 
         Group[] groups = Group.values();
@@ -185,7 +179,7 @@ public class ResultManager {
 
     /**
      * Function allocating places for teams in the group specified at the entrance.
-     * Places are allocated according to the rules given in the text.
+     * Places are allocated according to the rules given in the recruitment task.
      */
     private void setPlaceInGroup(Group group) {
 

@@ -45,10 +45,6 @@ public class MatchupManager {
         this.resultManager = resultManager;
     }
 
-    public MatchupRepository getMatchupRepository() {
-        return matchupRepository;
-    }
-
     private void save(Matchup matchup) {
 
         matchupRepository.save(matchup);
@@ -68,16 +64,24 @@ public class MatchupManager {
         return matchupRepository.findById(id);
     }
 
+    /**
+     * Function set scores of both team of given matchup.
+     * Inequality prevents the result from overwriting an already entered result.
+     */
     public void updateMatchup(Long id, int teamA_score, int teamB_score) {
 
         Matchup temp = matchupRepository.findById(id).get();
-        if(temp.getTeamA_score()<0) {
+        if(temp.getTeamA_score() < 0) {
             temp.setTeamA_score(teamA_score);
             temp.setTeamB_score(teamB_score);
             save(temp);
         }
     }
 
+    /**
+     * The function fills in matchups with random values.
+     * We have a mechanism here to prevent draws in the knockout stages.
+     */
     public void saveDefaultMatchups() {
 
         Random random = new Random();
@@ -102,6 +106,9 @@ public class MatchupManager {
         });
     }
 
+    /**
+     * This feature is responsible for creating empty group matchups.
+     */
     public void createGroupMatchups(TeamRepository teamRepository) {
 
         if (teamRepository.count() == numberOfTeams && matchupRepository.count() == 0) {
@@ -125,6 +132,10 @@ public class MatchupManager {
         }
     }
 
+    /**
+     * This feature is responsible for creating empty phase1 matchups.
+     * Based on group results.
+     */
     public void createPhase1Matchups(ResultRepository resultRepository) {
 
         int currentGroup = 0;
@@ -151,11 +162,11 @@ public class MatchupManager {
             currentGroup++;
         }
     }
-    /**
-     *
-     *
-     * */
 
+    /**
+     * This function is responsible for creating empty phase2 and higher matchups.
+     * Based on rules given in the recruitment task.
+     */
     public void createPhase2AndHigherMatchups(MatchupType previousPhase, MatchupType currentPhase) {
 
         List<Matchup> matchups = StreamSupport.stream(matchupRepository.findAllByMatchupType(previousPhase).spliterator(), false)
@@ -179,6 +190,10 @@ public class MatchupManager {
         }
     }
 
+    /**
+     * The function checks if any phase of the tournament has been completed.
+     * Both group and knockout stages.
+     */
     private void checkIfPhaseIsComplete(ResultRepository resultRepository) {
 
         List<Matchup> matchups = StreamSupport.stream(matchupRepository.findAll().spliterator(), false)
