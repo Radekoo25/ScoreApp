@@ -13,14 +13,13 @@
 
 <div class="container mt-3">
 
-    <form th:action="@{'/api/teams/team/update/save/{id}'(id=${team.id})}"
-          th:object="${team}" method="post">
+    <form th:action="@{'/api/teams/photo/upload/save/{id}'(id=${team.id})}"
+          th:object="${team}" enctype="multipart/form-data" method="post">
         <table class="table table-striped">
             <thead>
             <tr>
 
                 <th>Team</th>
-                <th>Description</th>
                 <th>Photo</th>
                 <th></th>
 
@@ -30,9 +29,8 @@
             <tbody>
             <tr>
                 <td th:text="${team.name}"></td>
-                <td><input type="text" maxlength="100" th:field="*{description}" /></td>
-                <td><input type="file" accept="image/png, image/jpeg"/></td>
-                <td><input type="submit" value="Submit" /></td>
+                <td><input type="file" name="file" accept="image/png, image/jpeg"/></td>
+                <td><input type="submit" value="Upload" /></td>
             </tr>
             </tbody>
         </table>

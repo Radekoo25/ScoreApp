@@ -68,6 +68,7 @@
             <th class="text-center">Group</th>
             <th class="text-center">Photo</th>
             <th class="text-center"></th>
+            <th class="text-center"></th>
 
         </tr>
         </thead>
@@ -78,13 +79,19 @@
             <td class="text-center" th:text="${team.description}"></td>
             <td class="text-center" th:text="${team.group}"></td>
             <td class="text-center">
-                <img th:src="@{${'/photos/' + 'Logo.png'}}"
+                <img th:src="@{${'/photos/' + team.photo}}"
                      class="img-fluid rounded-circle" width="200" alt="ImageUploaded"/>
             </td>
             <td class="text-center">
-                <form action="#" th:action="@{'/api/teams/team/update/{id}'(id=${team.id})}"
-                      th:object="${team}" th:method="post">
-                    <button>Update</button>
+                <form action="#" th:action="@{'/api/teams/team/update/description/{id}'(id=${team.id})}"
+                      th:object="${team}" th:method="get">
+                    <button>Update Description</button>
+                </form>
+            </td>
+            <td class="text-center">
+                <form action="#" th:action="@{'/api/teams/photo/upload/{id}'(id=${team.id})}"
+                      th:object="${team}" th:method="get">
+                    <button>Upload Photo</button>
                 </form>
             </td>
         </tr>

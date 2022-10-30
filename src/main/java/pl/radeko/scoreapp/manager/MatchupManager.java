@@ -68,14 +68,22 @@ public class MatchupManager {
      * Function set scores of both team of given matchup.
      * Inequality prevents the result from overwriting an already entered result.
      */
-    public void updateMatchup(Long id, int teamA_score, int teamB_score) {
+    public int updateMatchup(Long id, int teamA_score, int teamB_score) {
 
         Matchup temp = matchupRepository.findById(id).get();
+        boolean isDrawInKnockoutStage = (temp.getMatchupType().ordinal() >= MatchupType.PHASE_1.ordinal() &&
+                teamA_score == teamB_score);
+
         if(temp.getTeamA_score() < 0) {
-            temp.setTeamA_score(teamA_score);
-            temp.setTeamB_score(teamB_score);
-            save(temp);
+            if(isDrawInKnockoutStage) {
+                return 1;
+            }
+                temp.setTeamA_score(teamA_score);
+                temp.setTeamB_score(teamB_score);
+                save(temp);
+                return 0;
         }
+        return 2;
     }
 
     /**
