@@ -137,6 +137,9 @@ public class TeamManager {
         });
     }
 
+    /**
+     * A function for getting file extension.
+     */
     private String getFileExtension(String fileName) {
         if (fileName == null) {
             return null;
@@ -146,6 +149,9 @@ public class TeamManager {
         return fileNameParts[fileNameParts.length - 1];
     }
 
+    /**
+     * A function for saving downloaded photo in file system. Location of directory is given in final String, UPLOAD_DIR.
+     */
     public void storeFile(Long id, MultipartFile file) throws IOException {
 
         String fileExtension = getFileExtension(file.getOriginalFilename());
