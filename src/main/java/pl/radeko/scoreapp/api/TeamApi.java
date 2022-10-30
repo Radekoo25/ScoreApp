@@ -9,24 +9,16 @@ import org.springframework.web.servlet.view.RedirectView;
 import pl.radeko.scoreapp.manager.MatchupManager;
 import pl.radeko.scoreapp.manager.ResultManager;
 import pl.radeko.scoreapp.manager.TeamManager;
-import pl.radeko.scoreapp.repository.TeamRepository;
-import pl.radeko.scoreapp.repository.entity.Matchup;
-import pl.radeko.scoreapp.repository.entity.Result;
 import pl.radeko.scoreapp.repository.entity.Team;
-import pl.radeko.scoreapp.repository.enums.Group;
-import pl.radeko.scoreapp.repository.enums.MatchupType;
 
+import javax.validation.Valid;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Optional;
+
 
 @Controller
 @RequestMapping("/api/teams/")
 public class TeamApi {
 
-    public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
     private final TeamManager teams;
     private final ResultManager results;
     private final MatchupManager matchups;
@@ -43,31 +35,43 @@ public class TeamApi {
     public String home(Model model) {
 
         model.addAttribute("teams", teams.findAll());
-        return "teams_index";
+        return "/teams/teams_index";
+    }
+
+    @GetMapping("/error")
+    public String error(@ModelAttribute("error") int error) {
+
+        return "error";
     }
 
     @GetMapping("/team/add")
     public String prepareNewTeam(Model model) {
 
         model.addAttribute("team", new Team());
-        return "addNewTeam";
+        return "/teams/addNewTeam";
     }
 
     @PostMapping("/team/add")
-    public RedirectView addTeam(@ModelAttribute Team team) {
+    public RedirectView addTeam(@ModelAttribute("team") @Valid Team team) {
 
-        teams.save(team);
-        return new RedirectView("/api/teams/index");
+        if(teams.save(team)) {
+            return new RedirectView("/api/teams/index");
+        }
+        else {
+            RedirectView redirectView = new RedirectView("/api/teams/error");
+            redirectView.addStaticAttribute("error", 100);
+            return redirectView;
+        }
     }
 
-    @PostMapping("/team/update/{id}")
-    public String prepareTeamForUpdate(@PathVariable Long id, Model model) {
+    @GetMapping("/team/update/description/{id}")
+    public String prepareTeamForUpdateDescription(@PathVariable Long id, Model model) {
 
         model.addAttribute("team", teams.findTeamById(id).get());
-        return "updateTeam";
+        return "/teams/updateTeamDescription";
     }
 
-    @PostMapping("/team/update/save/{id}")
+    @PostMapping("/team/update/description/save/{id}")
     public RedirectView updateTeam(@PathVariable Long id, @ModelAttribute Team team) {
 
         teams.updateTeamDescription(id, team.getDescription());
@@ -77,27 +81,47 @@ public class TeamApi {
     @PostMapping("/filldefault")
     public RedirectView saveDefaultTeams() {
 
-        teams.saveDefaultTeams();
-        return new RedirectView("/api/teams/index");
+        if(teams.saveDefaultTeams()) {
+            return new RedirectView("/api/teams/index");
+        }
+        else {
+            RedirectView redirectView = new RedirectView("/api/teams/error");
+            redirectView.addStaticAttribute("error", 100);
+            return redirectView;
+        }
     }
 
     @PostMapping("/drawgroups")
     public RedirectView drawGroups() {
+        int condition = teams.drawGroups();
+        if(condition == 0) {
+            results.createGroupResults(teams.getTeamRepository());
+            matchups.createGroupMatchups(teams.getTeamRepository());
+            return new RedirectView("/api/teams/index");
+        }
+        else if (condition == 1) {
+            RedirectView redirectView = new RedirectView("/api/teams/error");
+            redirectView.addStaticAttribute("error", 110);
+            return redirectView;
+        }
+        else {
+            RedirectView redirectView = new RedirectView("/api/teams/error");
+            redirectView.addStaticAttribute("error", 111);
+            return redirectView;
+        }
+    }
 
-        teams.drawGroups();
-        results.createGroupResults(teams.getTeamRepository());
-        matchups.createGroupMatchups(teams.getTeamRepository());
+    @GetMapping("photo/upload/{id}")
+    public String prepareFileForUpload(@PathVariable Long id, Model model) {
+
+        model.addAttribute("team", teams.findTeamById(id).get());
+        return "/teams/uploadPhoto";
+    }
+
+    @PostMapping("photo/upload/save/{id}")
+    public RedirectView UploadFile(@PathVariable Long id, @ModelAttribute Team team, @RequestParam(name = "file", required = false) MultipartFile file) throws IOException {
+
+        teams.storeFile(id, file);
         return new RedirectView("/api/teams/index");
-    }
-
-    @PostMapping("/updatedescription/{id}")
-    public void updateTeamDescription(@PathVariable Long id, @RequestParam String description) {
-
-        teams.updateTeamDescription(id, description);
-    }
-
-    @PostMapping("/uploadphoto/{id}")
-    public void uploadTeamPhoto(@PathVariable Long id, @RequestParam MultipartFile file) throws IOException {
-        teams.uploadTeamPhoto(id, file);
     }
 }

@@ -3,6 +3,9 @@ package pl.radeko.scoreapp.repository.entity;
 import pl.radeko.scoreapp.repository.enums.Group;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 @Entity
@@ -14,17 +17,18 @@ public class Team {
     private Long id;
 
     @Column(name="name")
+    @NotEmpty(message = "Team name cant be empty!!")
+    @Size(min = 5, max =250)
     private String name;
     @Column(name="description")
     private String description;
-    @Column(name="photo",length=1048576)
-    @Lob
-    private byte[] photo;
+    @Column(name="photo")
+    private String photo;
     @Column(name="division")
     @Enumerated(EnumType.STRING)
     private Group group;
 
-    public Team(String name, String description, byte[] photo) {
+    public Team(String name, String description, String photo) {
         this.name = name;
         this.description = description;
         this.photo = photo;
@@ -35,6 +39,7 @@ public class Team {
         this.name = name;
         this.description = description;
         this.group = null;
+        this.photo = "Logo.png";
     }
 
     public Team() {
@@ -65,11 +70,11 @@ public class Team {
         this.description = description;
     }
 
-    public byte[] getPhoto() {
+    public String getPhoto() {
         return photo;
     }
 
-    public void setPhoto(byte[] photo) {
+    public void setPhoto(String photo) {
         this.photo = photo;
     }
 
@@ -87,7 +92,7 @@ public class Team {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", photo=" + Arrays.toString(photo) +
+                ", photo=" + photo +
                 ", group=" + group +
                 '}';
     }

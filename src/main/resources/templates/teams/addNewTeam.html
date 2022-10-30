@@ -28,7 +28,10 @@
 
             <tbody>
             <tr>
-                <td><input type="text" maxlength="100" th:field="*{name}" /></td>
+                <td>
+                    <input type="text" maxlength="100" th:field="*{name}" />
+                    <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" />
+                </td>
                 <td><input type="text" maxlength="100" th:field="*{description}" /></td>
                 <td><input type="submit" value="Submit" /></td>
             </tr>

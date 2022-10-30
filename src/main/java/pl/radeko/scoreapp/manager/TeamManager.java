@@ -8,17 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import pl.radeko.scoreapp.manager.ImageUtility.ImageUtils;
 import pl.radeko.scoreapp.repository.TeamRepository;
 import pl.radeko.scoreapp.repository.entity.Matchup;
 import pl.radeko.scoreapp.repository.entity.Team;
 import pl.radeko.scoreapp.repository.enums.Group;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -29,14 +29,17 @@ public class TeamManager {
     public int sizeOfGroup;
     @Value("${scoreapp.numberOfTeams}")
     public int numberOfTeams;
+    private final String UPLOAD_DIR = "src/main/resources/static/photos";
     private TeamRepository teamRepository;
     private ResultManager resultManager;
+    private final Path fileStorageLocation;
 
     @Autowired
-    public TeamManager(TeamRepository teamRepository, ResultManager resultManager)
-    {
+    public TeamManager(TeamRepository teamRepository, ResultManager resultManager) throws IOException {
         this.teamRepository = teamRepository;
         this.resultManager = resultManager;
+        this.fileStorageLocation = Paths.get(UPLOAD_DIR).toAbsolutePath().normalize();
+        Files.createDirectories(this.fileStorageLocation);
     }
 
     public TeamRepository getTeamRepository() {
@@ -51,30 +54,15 @@ public class TeamManager {
         return teamRepository.findById(id);
     }
 
-    public void save(Team team) {
+    public boolean save(Team team) {
 
-        if (teamRepository.count() <= numberOfTeams) {
+        if (teamRepository.count() < numberOfTeams) {
             teamRepository.save(team);
+            return true;
         }
-    }
-
-    public void uploadTeamPhoto(Long id, MultipartFile file) throws IOException {
-
-        Team team = teamRepository.findById(id).get();
-        team.setPhoto(ImageUtils.compressImage(file.getBytes()));
-
-        if (team.getPhoto() != null) {
-            teamRepository.save(team);
-            //return "file uploaded successfully : " + file.getOriginalFilename();
+        else {
+            return false;
         }
-        //return null;
-    }
-
-    public byte[] downloadPhoto(Long id){
-
-        Optional<Team> team = teamRepository.findById(id);
-        byte[] photo = team.get().getPhoto();
-        return photo;
     }
 
     public void updateTeamDescription(Long id, String description) {
@@ -86,12 +74,18 @@ public class TeamManager {
      * A function for filling the base with default teams.
      * It does not overwrite already created teams.
      */
-    public void saveDefaultTeams() {
+    public boolean saveDefaultTeams() {
 
-        for (int i = (int) teamRepository.count() + 1; i <= numberOfTeams; i++) {
-            String teamName = "Drużyna" + i;
-            Team team = new Team(teamName, "--Brak--");
-            teamRepository.save(team);
+        if (teamRepository.count() < numberOfTeams) {
+            for (int i = (int) teamRepository.count() + 1; i <= numberOfTeams; i++) {
+                String teamName = "Drużyna" + i;
+                Team team = new Team(teamName, "--Brak--");
+                teamRepository.save(team);
+            }
+            return true;
+        }
+        else {
+            return false;
         }
     }
 
@@ -99,14 +93,20 @@ public class TeamManager {
      * A function used to draw teams to individual groups.
      * Overwrites the Group field for all teams in the base.
      */
-    public void drawGroups() {
+    public int drawGroups() {
         if (teamRepository.count() == numberOfTeams && resultManager.getResultRepository().count() == 0) {
 
             List<Team> teams = StreamSupport.stream(teamRepository.findAll().spliterator(), false)
                     .collect(Collectors.toList());
-                List<Team> newListOrder = shuffleList(teams);
-                updateTeamGroup(newListOrder);
-
+            List<Team> newListOrder = shuffleList(teams);
+            updateTeamGroup(newListOrder);
+            return 0;
+        }
+        else if (teamRepository.count() < numberOfTeams) {
+            return 1;
+        }
+        else {
+            return 2;
         }
     }
 
@@ -135,5 +135,28 @@ public class TeamManager {
             temp.setGroup(t.getGroup());
             teamRepository.save(temp);
         });
+    }
+
+    private String getFileExtension(String fileName) {
+        if (fileName == null) {
+            return null;
+        }
+        String[] fileNameParts = fileName.split("\\.");
+
+        return fileNameParts[fileNameParts.length - 1];
+    }
+
+    public void storeFile(Long id, MultipartFile file) throws IOException {
+
+        String fileExtension = getFileExtension(file.getOriginalFilename());
+        if (fileExtension.equals("jpg") || fileExtension.equals("jpeg") || fileExtension.equals("png")) {
+            String fileName = teamRepository.findById(id).get().getId().toString() + "team_photo." + fileExtension;
+
+            Path targetLocation = this.fileStorageLocation.resolve(fileName);
+            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+            teamRepository.findById(id).get().setPhoto(fileName);
+            teamRepository.save(teamRepository.findById(id).get());
+        }
     }
 }

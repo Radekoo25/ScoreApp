@@ -40,6 +40,6 @@ public class ResultApi {
         model.addAttribute("group_g", results.findAllByGroup(Group.GROUP_G));
         model.addAttribute("group_h", results.findAllByGroup(Group.GROUP_H));
 
-        return "results_index";
+        return "/results/results_index";
     }
 }
