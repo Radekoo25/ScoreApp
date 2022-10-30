@@ -3,8 +3,6 @@ package pl.radeko.scoreapp.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.radeko.scoreapp.manager.MatchupManager;
-import pl.radeko.scoreapp.manager.ResultManager;
-import pl.radeko.scoreapp.manager.TeamManager;
 import pl.radeko.scoreapp.repository.entity.Matchup;
 import pl.radeko.scoreapp.repository.enums.MatchupType;
 import org.springframework.stereotype.Controller;
@@ -39,19 +37,37 @@ public class MatchupApi {
         model.addAttribute("phase_3", matchups.findAllByMatchupType(MatchupType.PHASE_3));
         model.addAttribute("phase_4", matchups.findAllByMatchupType(MatchupType.PHASE_4));
 
-        return "matchups_index";
+        return "/matchups/matchups_index";
+    }
+
+    @GetMapping("/error")
+    public String error(@ModelAttribute("error") int error) {
+
+        return "error";
     }
 
     @PostMapping("/matchup/update/{id}")
     public String prepareMatchupForUpdate(@PathVariable Long id, Model model) {
         model.addAttribute("matchup", matchups.findMatchupById(id).get());
-        return "updateMatchup";
+        return "/matchups/updateMatchup";
     }
 
     @PostMapping("/matchup/update/save/{id}")
     public RedirectView updateMatchup(@PathVariable Long id, @ModelAttribute Matchup matchup) {
-        matchups.updateMatchup(id, matchup.getTeamA_score(), matchup.getTeamB_score());
-        return new RedirectView("/api/matchups/index");
+        int condition =  matchups.updateMatchup(id, matchup.getTeamA_score(), matchup.getTeamB_score());
+        if(condition == 0) {
+            return new RedirectView("/api/matchups/index");
+        }
+        else if (condition == 1) {
+            RedirectView redirectView = new RedirectView("/api/matchups/error");
+            redirectView.addStaticAttribute("error", 200);
+            return redirectView;
+        }
+        else {
+            RedirectView redirectView = new RedirectView("/api/matchups/error");
+            redirectView.addStaticAttribute("error", 201);
+            return redirectView;
+        }
     }
 
     @PostMapping("/filldefaultmatchups")
