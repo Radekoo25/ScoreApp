@@ -25,6 +25,8 @@ public class ResultManager {
 
     @Value("${scoreapp.numberOfTeams}")
     public int numberOfTeams;
+    @Value("${scoreapp.sizeOfGroup}")
+    public int sizeOfGroup;
     private ResultRepository resultRepository;
 
     @Autowired
