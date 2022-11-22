@@ -20,7 +20,10 @@ By default, the program runs on Tomcat (http: // localhost: 8080). The applicati
 5. Error page - there are implementation of error handling on this page. We have a case here, for example, when a user tries to draw teams, but not all of them have been entered yet.
 ### Comments
 1. I was not able to fully implement the function that would check head to head results in the event of a tie. In the event that the rest of the rules do not determine a winner, the winner is assigned randomly.
-2. All used dependencies can be found in <b>pom.xml</b> file
+2. There is a problem with changing team photos. The picture file is created in the folder, however ... does not want to be displayed. There is probably a problem with the path, 
+but I can't find it, and I've spent too much time on this feature.
+3. The application has been tested by me, all other functions work as they should. Errors are handled, I do not see any serious problems with the app.
+4. All used dependencies can be found in <b>pom.xml</b> file.
 ### Technologies
 1. Java
 2. Spring

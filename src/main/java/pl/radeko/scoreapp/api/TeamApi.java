@@ -33,7 +33,6 @@ public class TeamApi {
 
     @GetMapping("/index")
     public String home(Model model) {
-
         model.addAttribute("teams", teams.findAll());
         return "/teams/teams_index";
     }
