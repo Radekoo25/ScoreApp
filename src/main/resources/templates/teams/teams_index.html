@@ -67,6 +67,7 @@
             <th class="text-center">Description</th>
             <th class="text-center">Group</th>
             <th class="text-center">Photo</th>
+            <th class="text-center">Video</th>
             <th class="text-center"></th>
             <th class="text-center"></th>
 
@@ -80,7 +81,11 @@
             <td class="text-center" th:text="${team.group}"></td>
             <td class="text-center">
                 <img th:src="@{${'/photos/' + team.photo}}"
-                     class="img-fluid rounded-circle" width="200" alt="ImageUploaded"/>
+                     class="img-fluid rounded-circle" alt="ImageUploaded"/>
+            </td>
+            <td class="text-center">
+                <iframe class="responsive-iframe" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+                </iframe>
             </td>
             <td class="text-center">
                 <form action="#" th:action="@{'/api/teams/team/update/description/{id}'(id=${team.id})}"
