@@ -31,7 +31,7 @@ public class Team {
     public Team(String name, String description, String photo) {
         this.name = name;
         this.description = description;
-        this.photo = photo;
+        this.photo = null;
         this.group = null;
     }
 
@@ -39,7 +39,7 @@ public class Team {
         this.name = name;
         this.description = description;
         this.group = null;
-        this.photo = "Logo.png";
+        this.photo = null;
     }
 
     public Team() {
@@ -50,9 +50,7 @@ public class Team {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public void setId(Long id) {this.id = id;}
 
     public String getName() {
         return name;

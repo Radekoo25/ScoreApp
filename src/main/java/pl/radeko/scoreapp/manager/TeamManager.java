@@ -57,6 +57,7 @@ public class TeamManager {
     public boolean save(Team team) {
 
         if (teamRepository.count() < numberOfTeams) {
+            team.setPhoto("Logo.png");
             teamRepository.save(team);
             return true;
         }
@@ -80,6 +81,7 @@ public class TeamManager {
             for (int i = (int) teamRepository.count() + 1; i <= numberOfTeams; i++) {
                 String teamName = "Drużyna" + i;
                 Team team = new Team(teamName, "--Brak--");
+                team.setPhoto("Logo.png");
                 teamRepository.save(team);
             }
             return true;
