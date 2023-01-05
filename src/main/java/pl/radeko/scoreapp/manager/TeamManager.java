@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import pl.radeko.scoreapp.repository.TeamRepository;
 import pl.radeko.scoreapp.repository.entity.Matchup;
 import pl.radeko.scoreapp.repository.entity.Team;
+import pl.radeko.scoreapp.repository.entity.Tournament;
 import pl.radeko.scoreapp.repository.enums.Group;
 
 import java.io.IOException;
@@ -32,12 +33,14 @@ public class TeamManager {
     private final String UPLOAD_DIR = "src/main/resources/static/photos";
     private TeamRepository teamRepository;
     private ResultManager resultManager;
+    private TournamentManager tournamentManager;
     private final Path fileStorageLocation;
 
     @Autowired
-    public TeamManager(TeamRepository teamRepository, ResultManager resultManager) throws IOException {
+    public TeamManager(TeamRepository teamRepository, ResultManager resultManager, TournamentManager tournamentManager) throws IOException {
         this.teamRepository = teamRepository;
         this.resultManager = resultManager;
+        this.tournamentManager = tournamentManager;
         this.fileStorageLocation = Paths.get(UPLOAD_DIR).toAbsolutePath().normalize();
         Files.createDirectories(this.fileStorageLocation);
     }
@@ -54,10 +57,16 @@ public class TeamManager {
         return teamRepository.findById(id);
     }
 
-    public boolean save(Team team) {
+    public Iterable<Team> findTeamByTournamentId(Long id) {
+        return teamRepository.findAllByTournamentId(id);
+    }
 
-        if (teamRepository.count() < numberOfTeams) {
+    public boolean save(Team team, Long id) {
+
+        System.out.println("SAVE");
+        if (teamRepository.findAllByTournamentId(id).size() < numberOfTeams) {
             team.setPhoto("Logo.png");
+            team.setTournament(tournamentManager.getTournamentRepository().findById(id).orElse(null));
             teamRepository.save(team);
             return true;
         }
@@ -75,12 +84,12 @@ public class TeamManager {
      * A function for filling the base with default teams.
      * It does not overwrite already created teams.
      */
-    public boolean saveDefaultTeams() {
+    public boolean saveDefaultTeams(Long id) {
 
-        if (teamRepository.count() < numberOfTeams) {
-            for (int i = (int) teamRepository.count() + 1; i <= numberOfTeams; i++) {
+        if (teamRepository.findAllByTournamentId(id).size() < numberOfTeams) {
+            for (int i = (int) teamRepository.findAllByTournamentId(id).size() + 1; i <= numberOfTeams; i++) {
                 String teamName = "Drużyna" + i;
-                Team team = new Team(teamName, "--Brak--");
+                Team team = new Team(tournamentManager.getTournamentRepository().findById(id).get(), teamName, "--Brak--");
                 team.setPhoto("Logo.png");
                 teamRepository.save(team);
             }

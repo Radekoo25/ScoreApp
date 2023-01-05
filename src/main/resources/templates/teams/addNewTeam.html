@@ -13,8 +13,8 @@
 
 <div class="container mt-3">
 
-    <form th:action="@{/api/teams/team/add}"
-          th:object="${team}" method="post">
+    <form th:action="@{'/api/teams/team/add/{id}'(id=${tournament_id})}" th:object="${team}" method="post">
+
         <table class="table table-striped">
             <thead>
             <tr>

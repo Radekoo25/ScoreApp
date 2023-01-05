@@ -20,6 +20,9 @@
         <div class="collapse navbar-collapse" id="mynavbar">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
+                    <a class="nav-link" th:href="@{/api/tournaments/index}">Tournaments</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" th:href="@{/api/teams/index}">Teams</a>
                 </li>
                 <li class="nav-item">
@@ -29,23 +32,13 @@
                     <a class="nav-link" th:href="@{/api/results/index}">Groups</a>
                 </li>
 
+                <li class="nav-item nav-divider"></li>
+
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Tools</a>
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Tournament</a>
                     <ul class="dropdown-menu">
-                        <li>
-                            <form class="dropdown-item" action="#" th:action="@{/api/teams/team/add}" th:method="get">
-                                <button class="btn btn-outline-dark">Add Team</button>
-                            </form>
-                        </li>
-                        <li>
-                            <form class="dropdown-item" action="#" th:action="@{/api/teams/filldefault}" th:method="post">
-                                <button class="btn btn-outline-dark">Default Teams</button>
-                            </form>
-                        </li>
-                        <li>
-                            <form class="dropdown-item" action="#" th:action="@{/api/teams/drawgroups}" th:method="post">
-                                <button class="btn btn-outline-dark">Draw groups</button>
-                            </form>
+                        <li th:each="tournament : ${tournaments}">
+                            <a class="dropdown-item" th:href="@{/api/teams/index/{id}(id=${tournament.id})}" th:text="${tournament.name}"></a>
                         </li>
                     </ul>
                 </li>
@@ -63,6 +56,7 @@
         <thead>
         <tr>
 
+            <th class="text-center">Tournament</th>
             <th class="text-center">Name</th>
             <th class="text-center">Description</th>
             <th class="text-center">Group</th>
@@ -76,6 +70,7 @@
         <tbody>
         <tr th:each="team: ${teams}">
 
+            <td class="text-center" th:text="${team.tournament.name}"></td>
             <td class="text-center" th:text="${team.name}"></td>
             <td class="text-center" th:text="${team.description}"></td>
             <td class="text-center" th:text="${team.group}"></td>
