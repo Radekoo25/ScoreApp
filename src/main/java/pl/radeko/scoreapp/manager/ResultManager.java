@@ -7,7 +7,6 @@ package pl.radeko.scoreapp.manager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import pl.radeko.scoreapp.repository.MatchupRepository;
 import pl.radeko.scoreapp.repository.ResultRepository;
 import pl.radeko.scoreapp.repository.TeamRepository;
 import pl.radeko.scoreapp.repository.entity.Matchup;
@@ -35,8 +34,21 @@ public class ResultManager {
         this.resultRepository = resultRepository;
     }
 
+    public Iterable<Result> findAll() {
+        return resultRepository.findAllByOrderByPointsDescGoalsScoredDescGoalsLostAsc();
+    }
+
     public ResultRepository getResultRepository() {
         return resultRepository;
+    }
+
+    public void deleteByTournamentId(Long id) {
+        resultRepository.deleteAllByTeamTournamentId(id);
+    }
+
+    public Iterable<Result> findAllByGroupAndTournament(Group group, Long id) {
+
+        return resultRepository.findAllByGroupAndAndTeamTournamentIdOrderByPlace(group, id);
     }
 
     public Iterable<Result> findAllByGroup(Group group) {
@@ -63,10 +75,10 @@ public class ResultManager {
      * Creates related records in the Results database from the given team database.
      * All teams must be created.
      */
-    public void createGroupResults(TeamRepository teamRepository) {
+    public void createGroupResults(TeamRepository teamRepository, Long id) {
 
-        if(teamRepository.count() == numberOfTeams && resultRepository.count() == 0) {
-            List<Team> teams = StreamSupport.stream(teamRepository.findAll().spliterator(), false)
+        if(teamRepository.findAllByTournamentId(id).size() == numberOfTeams && resultRepository.findAllByTeamTournamentId(id).size() == 0) {
+            List<Team> teams = StreamSupport.stream(teamRepository.findAllByTournamentId(id).spliterator(), false)
                     .collect(Collectors.toList());
 
             teams.stream().forEach(t -> {
@@ -95,7 +107,7 @@ public class ResultManager {
             save(tempA);
             save(tempB);
 
-            setPlaceInGroup(tempA.getGroup());
+            setPlaceInGroup(tempA.getGroup(), matchup.getTeamA().getTournament().getId());
         }
     }
 
@@ -113,8 +125,8 @@ public class ResultManager {
 
         int goalRatioInMatchup = matchup.getTeamA_score()-matchup.getTeamB_score();
         int actualPoints = resultRepository.findById(matchup.getTeamA().getId()).get().getPoints();
-        int actualGoalScored = resultRepository.findById(matchup.getTeamA().getId()).get().getGoals_scored();
-        int actualGoalLost = resultRepository.findById(matchup.getTeamA().getId()).get().getGoals_lost();
+        int actualGoalScored = resultRepository.findById(matchup.getTeamA().getId()).get().getGoalsScored();
+        int actualGoalLost = resultRepository.findById(matchup.getTeamA().getId()).get().getGoalsLost();
         int actualLost = resultRepository.findById(matchup.getTeamA().getId()).get().getLost();
         int actualDraws = resultRepository.findById(matchup.getTeamA().getId()).get().getDraws();
         int actualWins = resultRepository.findById(matchup.getTeamA().getId()).get().getWins();
@@ -126,8 +138,8 @@ public class ResultManager {
         temp.setDraws(actualDraws);
         temp.setLost(actualLost);
         temp.setPoints(checkWin(goalRatioInMatchup) + actualPoints);
-        temp.setGoals_scored(matchup.getTeamA_score() + actualGoalScored);
-        temp.setGoals_lost(matchup.getTeamB_score() + actualGoalLost);
+        temp.setGoalsScored(matchup.getTeamA_score() + actualGoalScored);
+        temp.setGoalsLost(matchup.getTeamB_score() + actualGoalLost);
 
         if(goalRatioInMatchup > 0) {
             temp.setWins(actualWins + 1);
@@ -150,8 +162,8 @@ public class ResultManager {
 
         int goalRatioInMatchup = matchup.getTeamB_score()-matchup.getTeamA_score();
         int actualPoints = resultRepository.findById(matchup.getTeamB().getId()).get().getPoints();
-        int actualGoalScored = resultRepository.findById(matchup.getTeamB().getId()).get().getGoals_scored();
-        int actualGoalLost = resultRepository.findById(matchup.getTeamB().getId()).get().getGoals_lost();
+        int actualGoalScored = resultRepository.findById(matchup.getTeamB().getId()).get().getGoalsScored();
+        int actualGoalLost = resultRepository.findById(matchup.getTeamB().getId()).get().getGoalsLost();
         int actualLost = resultRepository.findById(matchup.getTeamB().getId()).get().getLost();
         int actualDraws = resultRepository.findById(matchup.getTeamB().getId()).get().getDraws();
         int actualWins = resultRepository.findById(matchup.getTeamB().getId()).get().getWins();
@@ -163,8 +175,8 @@ public class ResultManager {
         temp.setDraws(actualDraws);
         temp.setLost(actualLost);
         temp.setPoints(checkWin(goalRatioInMatchup) + actualPoints);
-        temp.setGoals_scored(matchup.getTeamB_score() + actualGoalScored);
-        temp.setGoals_lost(matchup.getTeamA_score() + actualGoalLost);
+        temp.setGoalsScored(matchup.getTeamB_score() + actualGoalScored);
+        temp.setGoalsLost(matchup.getTeamA_score() + actualGoalLost);
 
         if(goalRatioInMatchup > 0) {
             temp.setWins(actualWins + 1);
@@ -183,14 +195,14 @@ public class ResultManager {
      * Function allocating places for teams in the group specified at the entrance.
      * Places are allocated according to the rules given in the recruitment task.
      */
-    private void setPlaceInGroup(Group group) {
+    private void setPlaceInGroup(Group group, Long id) {
 
-        List<Result> results = StreamSupport.stream(resultRepository.findAllByGroup(group).spliterator(), false)
+        List<Result> results = StreamSupport.stream(resultRepository.findAllByGroupAndTeamTournamentId(group, id).spliterator(), false)
                 .collect(Collectors.toList());
 
         Collections.sort(results, Comparator.comparing(Result::getPoints)
-                .thenComparing(Result::getGoals_scored)
-                .thenComparing(Result::getGoals_lost).reversed());
+                .thenComparing(Result::getGoalsScored)
+                .thenComparing(Result::getGoalsLost).reversed());
 
         resultRepository.findById(results.get(0).getId()).get().setPlace(1);
         resultRepository.findById(results.get(1).getId()).get().setPlace(2);

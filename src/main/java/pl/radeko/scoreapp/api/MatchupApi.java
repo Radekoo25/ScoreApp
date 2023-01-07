@@ -3,6 +3,7 @@ package pl.radeko.scoreapp.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.radeko.scoreapp.manager.MatchupManager;
+import pl.radeko.scoreapp.manager.TournamentManager;
 import pl.radeko.scoreapp.repository.entity.Matchup;
 import pl.radeko.scoreapp.repository.enums.MatchupType;
 import org.springframework.stereotype.Controller;
@@ -14,30 +15,42 @@ import org.springframework.web.servlet.view.RedirectView;
 public class MatchupApi {
 
     private final MatchupManager matchups;
+    private final TournamentManager tournaments;
 
     @Autowired
-    public MatchupApi(MatchupManager matchups) {
+    public MatchupApi(MatchupManager matchups, TournamentManager tournaments) {
         this.matchups = matchups;
+        this.tournaments = tournaments;
     }
 
     @GetMapping("/index")
     public String home(Model model) {
-
-        model.addAttribute("group_a", matchups.findAllByMatchupType(MatchupType.GROUP_A));
-        model.addAttribute("group_b", matchups.findAllByMatchupType(MatchupType.GROUP_B));
-        model.addAttribute("group_c", matchups.findAllByMatchupType(MatchupType.GROUP_C));
-        model.addAttribute("group_d", matchups.findAllByMatchupType(MatchupType.GROUP_D));
-        model.addAttribute("group_e", matchups.findAllByMatchupType(MatchupType.GROUP_E));
-        model.addAttribute("group_f", matchups.findAllByMatchupType(MatchupType.GROUP_F));
-        model.addAttribute("group_g", matchups.findAllByMatchupType(MatchupType.GROUP_G));
-        model.addAttribute("group_h", matchups.findAllByMatchupType(MatchupType.GROUP_H));
-
-        model.addAttribute("phase_1", matchups.findAllByMatchupType(MatchupType.PHASE_1));
-        model.addAttribute("phase_2", matchups.findAllByMatchupType(MatchupType.PHASE_2));
-        model.addAttribute("phase_3", matchups.findAllByMatchupType(MatchupType.PHASE_3));
-        model.addAttribute("phase_4", matchups.findAllByMatchupType(MatchupType.PHASE_4));
-
+        model.addAttribute("matchups", matchups.findAll());
+        model.addAttribute("tournaments", tournaments.findAll());
         return "/matchups/matchups_index";
+    }
+
+    @GetMapping("/index/{id}")
+    public String homeTournament(@PathVariable Long id, Model model) {
+        model.addAttribute("tournaments", tournaments.findAll());
+        model.addAttribute("tournament_id", tournaments.getTournamentRepository().findById(id).get().getId());
+        model.addAttribute("tournament_name", tournaments.getTournamentRepository().findById(id).get().getName());
+
+        model.addAttribute("group_a", matchups.findAllByMatchupTypeAndTournament(MatchupType.GROUP_A, id));
+        model.addAttribute("group_b", matchups.findAllByMatchupTypeAndTournament(MatchupType.GROUP_B, id));
+        model.addAttribute("group_c", matchups.findAllByMatchupTypeAndTournament(MatchupType.GROUP_C, id));
+        model.addAttribute("group_d", matchups.findAllByMatchupTypeAndTournament(MatchupType.GROUP_D, id));
+        model.addAttribute("group_e", matchups.findAllByMatchupTypeAndTournament(MatchupType.GROUP_E, id));
+        model.addAttribute("group_f", matchups.findAllByMatchupTypeAndTournament(MatchupType.GROUP_F, id));
+        model.addAttribute("group_g", matchups.findAllByMatchupTypeAndTournament(MatchupType.GROUP_G, id));
+        model.addAttribute("group_h", matchups.findAllByMatchupTypeAndTournament(MatchupType.GROUP_H, id));
+
+        model.addAttribute("phase_1", matchups.findAllByMatchupTypeAndTournament(MatchupType.PHASE_1, id));
+        model.addAttribute("phase_2", matchups.findAllByMatchupTypeAndTournament(MatchupType.PHASE_2, id));
+        model.addAttribute("phase_3", matchups.findAllByMatchupTypeAndTournament(MatchupType.PHASE_3, id));
+        model.addAttribute("phase_4", matchups.findAllByMatchupTypeAndTournament(MatchupType.PHASE_4, id));
+
+        return "/matchups/matchups_index_tournament";
     }
 
     @GetMapping("/error")
@@ -70,9 +83,9 @@ public class MatchupApi {
         }
     }
 
-    @PostMapping("/filldefaultmatchups")
-    public RedirectView saveDefaultGroupMatchups() {
-        matchups.saveDefaultMatchups();
-        return new RedirectView("/api/matchups/index");
+    @PostMapping("/filldefaultmatchups/{id}")
+    public RedirectView saveDefaultGroupMatchups(@PathVariable Long id) {
+        matchups.saveDefaultMatchups(id);
+        return new RedirectView("/api/matchups/index/"+id);
     }
 }

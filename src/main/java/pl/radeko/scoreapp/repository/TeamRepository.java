@@ -14,6 +14,8 @@ import java.util.Optional;
 @Repository
 public interface TeamRepository extends CrudRepository<Team, Long> {
     List<Team> findAllByGroup(Group group);
+    List<Team> findAllByGroupAndTournamentId(Group group, Long id);
     List<Team> findAllByTournament(Tournament tournament);
     List<Team> findAllByTournamentId(Long in);
+    void deleteAllByTournamentId(Long id);
 }

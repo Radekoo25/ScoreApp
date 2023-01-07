@@ -69,7 +69,7 @@ public class TeamApi {
 
         model.addAttribute("tournament_id", id);
         if(teams.save(team, id)) {
-            return new RedirectView("/api/teams/index");
+            return new RedirectView("/api/teams/index/"+id);
         }
         else {
             RedirectView redirectView = new RedirectView("/api/teams/error");
@@ -96,7 +96,7 @@ public class TeamApi {
     public RedirectView saveDefaultTeams(@PathVariable Long id) {
 
         if(teams.saveDefaultTeams(id)) {
-            return new RedirectView("/api/teams/index");
+            return new RedirectView("/api/teams/index/"+id);
         }
         else {
             RedirectView redirectView = new RedirectView("/api/teams/error");
@@ -106,12 +106,12 @@ public class TeamApi {
     }
 
     @PostMapping("/drawgroups/{id}")
-    public RedirectView drawGroups() {
-        int condition = teams.drawGroups();
+    public RedirectView drawGroups(@PathVariable Long id) {
+        int condition = teams.drawGroups(id);
         if(condition == 0) {
-            results.createGroupResults(teams.getTeamRepository());
-            matchups.createGroupMatchups(teams.getTeamRepository());
-            return new RedirectView("/api/teams/index");
+            results.createGroupResults(teams.getTeamRepository(), id);
+            matchups.createGroupMatchups(teams.getTeamRepository(), id);
+            return new RedirectView("/api/teams/index/"+id);
         }
         else if (condition == 1) {
             RedirectView redirectView = new RedirectView("/api/teams/error");

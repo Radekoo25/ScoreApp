@@ -53,6 +53,10 @@ public class TeamManager {
         return teamRepository.findAll();
     }
 
+    public void deleteByTournamentId(Long id) {
+        teamRepository.deleteAllByTournamentId(id);
+    }
+
     public Optional<Team> findTeamById(Long id) {
         return teamRepository.findById(id);
     }
@@ -62,8 +66,6 @@ public class TeamManager {
     }
 
     public boolean save(Team team, Long id) {
-
-        System.out.println("SAVE");
         if (teamRepository.findAllByTournamentId(id).size() < numberOfTeams) {
             team.setPhoto("Logo.png");
             team.setTournament(tournamentManager.getTournamentRepository().findById(id).orElse(null));
@@ -104,16 +106,15 @@ public class TeamManager {
      * A function used to draw teams to individual groups.
      * Overwrites the Group field for all teams in the base.
      */
-    public int drawGroups() {
-        if (teamRepository.count() == numberOfTeams && resultManager.getResultRepository().count() == 0) {
-
-            List<Team> teams = StreamSupport.stream(teamRepository.findAll().spliterator(), false)
+    public int drawGroups(Long id) {
+        if (teamRepository.findAllByTournamentId(id).size() == numberOfTeams && resultManager.getResultRepository().findAllByTeamTournamentId(id).size() == 0) {
+            List<Team> teams = StreamSupport.stream(teamRepository.findAllByTournamentId(id).spliterator(), false)
                     .collect(Collectors.toList());
             List<Team> newListOrder = shuffleList(teams);
             updateTeamGroup(newListOrder);
             return 0;
         }
-        else if (teamRepository.count() < numberOfTeams) {
+        else if (teamRepository.findAllByTournamentId(id).size() < numberOfTeams) {
             return 1;
         }
         else {
