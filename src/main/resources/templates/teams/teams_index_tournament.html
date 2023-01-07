@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>Teams</title>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/}">ScoreApp</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mynavbar">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/api/tournaments/index}">Tournaments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/api/teams/index}">Teams</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/api/matchups/index}">Matchups</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/api/results/index}">Groups</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Tools</a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <form class="dropdown-item" action="#" th:action="@{/api/teams/team/add/{id}(id=${tournament_id})}" th:method="get">
+                                <button class="btn btn-outline-dark">Add Team</button>
+                            </form>
+                        </li>
+                        <li>
+                            <form class="dropdown-item" action="#" th:action="@{/api/teams/filldefault/{id}(id=${tournament_id})}" th:method="post">
+                                <button class="btn btn-outline-dark">Default Teams</button>
+                            </form>
+                        </li>
+                        <li>
+                            <form class="dropdown-item" action="#" th:action="@{/api/teams/drawgroups/{id}(id=${tournament_id})}" th:method="post">
+                                <button class="btn btn-outline-dark">Draw groups</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item nav-divider"></li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Tournament</a>
+                    <ul class="dropdown-menu">
+                        <li th:each="tournament : ${tournaments}">
+                            <a class="dropdown-item" th:href="@{/api/teams/index/{id}(id=${tournament.id})}" th:text="${tournament.name}"></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<h1 class="text-center">Teams</h1>
+<h4 class="text-center">List of teams in tournament <b th:text="${tournament_name}"></b>.</h4>
+<div class="container mt-3">
+    <!-- Teams -->
+    <table class="table table-striped">
+        <thead>
+        <tr>
+
+            <th class="text-center">Name</th>
+            <th class="text-center">Description</th>
+            <th class="text-center">Group</th>
+            <th class="text-center">Photo</th>
+            <th class="text-center">Video</th>
+            <th class="text-center"></th>
+            <th class="text-center"></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="team: ${teams}">
+
+            <td class="text-center" th:text="${team.name}"></td>
+            <td class="text-center" th:text="${team.description}"></td>
+            <td class="text-center" th:text="${team.group}"></td>
+            <td class="text-center">
+                <img th:src="@{${'/photos/' + team.photo}}"
+                     class="img-fluid rounded-circle" alt="ImageUploaded"/>
+            </td>
+            <td class="text-center">
+                <iframe class="responsive-iframe" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+                </iframe>
+            </td>
+            <td class="text-center">
+                <form action="#" th:action="@{'/api/teams/team/update/description/{id}'(id=${team.id})}"
+                      th:object="${team}" th:method="get">
+                    <button>Update Description</button>
+                </form>
+            </td>
+            <td class="text-center">
+                <form action="#" th:action="@{'/api/teams/photo/upload/{id}'(id=${team.id})}"
+                      th:object="${team}" th:method="get">
+                    <button>Upload Photo</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+</body>
+</html>

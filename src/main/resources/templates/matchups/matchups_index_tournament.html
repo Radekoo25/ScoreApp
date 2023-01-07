@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>Matchups</title>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/}">ScoreApp</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mynavbar">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/api/tournaments/index}">Tournaments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/api/teams/index}">Teams</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/api/matchups/index}">Matchups</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/api/results/index}">Groups</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Tools</a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <form class="dropdown-item" action="#" th:action="@{/api/matchups/filldefaultmatchups/{id}(id=${tournament_id})}" th:method="post">
+                                <button class="btn btn-outline-dark">Default Matchups</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Tournament</a>
+                    <ul class="dropdown-menu">
+                        <li th:each="tournament : ${tournaments}">
+                            <a class="dropdown-item" th:href="@{/api/matchups/index/{id}(id=${tournament.id})}" th:text="${tournament.name}"></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<h1 class="text-center">Matchups</h1>
+<h4 class="text-center">List of all matchups in tournament <b th:text="${tournament_name}"></b>.</h4>
+
+<div class="container mt-3">
+    <!-- Group A -->
+    <table class="table table-striped">
+        <caption>
+            <h3>Group A</h3>
+        </caption>
+        <thead>
+        <tr>
+
+            <th class="text-center">First Team</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Second Team</th>
+            <th class="text-center"></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="matchup: ${group_a}">
+
+            <td class="text-center" th:text="${matchup.teamA.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
+            <td class="text-center" th:text="${matchup.teamB.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}">
+                    <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
+                          th:object="${matchup}" th:method="post">
+                    <button>Result</button>
+                </form>
+                    </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- Group B -->
+    <table class="table table-striped">
+        <caption>
+            <h3>Group B</h3>
+        </caption>
+        <thead>
+        <tr>
+
+            <th class="text-center">First Team</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Second Team</th>
+            <th class="text-center"></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="matchup: ${group_b}">
+
+            <td class="text-center" th:text="${matchup.teamA.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
+            <td class="text-center" th:text="${matchup.teamB.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}">
+                    <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
+                          th:object="${matchup}" th:method="post">
+                    <button>Result</button>
+                </form>
+                    </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- Group C -->
+    <table class="table table-striped">
+        <caption>
+            <h3>Group C</h3>
+        </caption>
+        <thead>
+        <tr>
+
+            <th class="text-center">First Team</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Second Team</th>
+            <th class="text-center"></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="matchup: ${group_c}">
+
+            <td class="text-center" th:text="${matchup.teamA.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
+            <td class="text-center" th:text="${matchup.teamB.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}">
+                    <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
+                          th:object="${matchup}" th:method="post">
+                    <button>Result</button>
+                </form>
+                    </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- Group D -->
+    <table class="table table-striped">
+        <caption>
+            <h3>Group D</h3>
+        </caption>
+        <thead>
+        <tr>
+
+            <th class="text-center">First Team</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Second Team</th>
+            <th class="text-center"></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="matchup: ${group_d}">
+
+            <td class="text-center" th:text="${matchup.teamA.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
+            <td class="text-center" th:text="${matchup.teamB.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}">
+                    <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
+                          th:object="${matchup}" th:method="post">
+                    <button>Result</button>
+                </form>
+                    </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- Group E -->
+    <table class="table table-striped">
+        <caption>
+            <h3>Group E</h3>
+        </caption>
+        <thead>
+        <tr>
+
+            <th class="text-center">First Team</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Second Team</th>
+            <th class="text-center"></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="matchup: ${group_e}">
+
+            <td class="text-center" th:text="${matchup.teamA.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
+            <td class="text-center" th:text="${matchup.teamB.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}">
+                    <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
+                          th:object="${matchup}" th:method="post">
+                    <button>Result</button>
+                </form>
+                    </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- Group F -->
+    <table class="table table-striped">
+        <caption>
+            <h3>Group F</h3>
+        </caption>
+        <thead>
+        <tr>
+
+            <th class="text-center">First Team</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Second Team</th>
+            <th class="text-center"></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="matchup: ${group_f}">
+
+            <td class="text-center" th:text="${matchup.teamA.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
+            <td class="text-center" th:text="${matchup.teamB.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}">
+                    <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
+                          th:object="${matchup}" th:method="post">
+                    <button>Result</button>
+                </form>
+                    </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- Group G -->
+    <table class="table table-striped">
+        <caption>
+            <h3>Group G</h3>
+        </caption>
+        <thead>
+        <tr>
+
+            <th class="text-center">First Team</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Second Team</th>
+            <th class="text-center"></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="matchup: ${group_g}">
+
+            <td class="text-center" th:text="${matchup.teamA.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
+            <td class="text-center" th:text="${matchup.teamB.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}">
+                    <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
+                          th:object="${matchup}" th:method="post">
+                    <button>Result</button>
+                </form>
+                    </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- Group H -->
+    <table class="table table-striped">
+        <caption>
+            <h3>Group H</h3>
+        </caption>
+        <thead>
+        <tr>
+
+            <th class="text-center">First Team</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Second Team</th>
+            <th class="text-center"></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="matchup: ${group_h}">
+
+            <td class="text-center" th:text="${matchup.teamA.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
+            <td class="text-center" th:text="${matchup.teamB.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}">
+                    <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
+                          th:object="${matchup}" th:method="post">
+                    <button>Result</button>
+                </form>
+                    </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- Round of 16 -->
+    <table class="table table-striped">
+        <caption>
+            <h3>Round of 16</h3>
+        </caption>
+        <thead>
+        <tr>
+
+            <th class="text-center">First Team</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Second Team</th>
+            <th class="text-center"></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="matchup: ${phase_1}">
+
+            <td class="text-center" th:text="${matchup.teamA.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
+            <td class="text-center" th:text="${matchup.teamB.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}">
+                    <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
+                          th:object="${matchup}" th:method="post">
+                    <button>Result</button>
+                </form>
+                    </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- Quarter finals -->
+    <table class="table table-striped">
+        <caption>
+            <h3>Quarter finals</h3>
+        </caption>
+        <thead>
+        <tr>
+
+            <th class="text-center">First Team</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Second Team</th>
+            <th class="text-center"></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="matchup: ${phase_2}">
+
+            <td class="text-center" th:text="${matchup.teamA.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
+            <td class="text-center" th:text="${matchup.teamB.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}">
+                    <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
+                          th:object="${matchup}" th:method="post">
+                    <button>Result</button>
+                </form>
+                    </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- Semi finals -->
+    <table class="table table-striped">
+        <caption>
+            <h3>Semi finals</h3>
+        </caption>
+        <thead>
+        <tr>
+
+            <th class="text-center">First Team</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Second Team</th>
+            <th class="text-center"></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="matchup: ${phase_3}">
+
+            <td class="text-center" th:text="${matchup.teamA.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
+            <td class="text-center" th:text="${matchup.teamB.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}">
+                    <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
+                          th:object="${matchup}" th:method="post">
+                    <button>Result</button>
+                </form>
+                    </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- Final -->
+    <table class="table table-striped">
+        <caption>
+            <h3>Final</h3>
+        </caption>
+        <thead>
+        <tr>
+
+            <th class="text-center">First Team</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Second Team</th>
+            <th class="text-center"></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="matchup: ${phase_4}">
+
+            <td class="text-center" th:text="${matchup.teamA.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamA_score == -1}"></span>
+                <span th:unless="${matchup.teamA_score == -1}"><p th:text="${matchup.teamA_score}"></p></span>
+            </td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}"></span>
+                <span th:unless="${matchup.teamB_score == -1}"><p th:text="${matchup.teamB_score}"></p></span>
+            </td>
+            <td class="text-center" th:text="${matchup.teamB.name}"></td>
+            <td class="text-center">
+                <span th:if="${matchup.teamB_score == -1}">
+                    <form action="#" th:action="@{'/api/matchups/matchup/update/{id}'(id=${matchup.id})}"
+                          th:object="${matchup}" th:method="post">
+                    <button>Result</button>
+                </form>
+                    </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+</body>
+</html>
