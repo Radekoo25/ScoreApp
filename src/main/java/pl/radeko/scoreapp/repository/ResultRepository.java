@@ -16,5 +16,6 @@ public interface ResultRepository extends CrudRepository<Result, Long> {
     List<Result> findAllByGroupAndAndTeamTournamentIdOrderByPlace(Group group, Long id);
     Result findByGroupAndPlaceAndTeamTournamentId(Group group, int place, Long id);
     List<Result> findAllByTeamTournamentId(Long id);
+    Result findByTeamId(Long id);
     void deleteAllByTeamTournamentId(Long id);
 }

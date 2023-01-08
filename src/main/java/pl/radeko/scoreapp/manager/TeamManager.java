@@ -67,9 +67,9 @@ public class TeamManager {
 
     public boolean save(Team team, Long id) {
         if (teamRepository.findAllByTournamentId(id).size() < numberOfTeams) {
-            team.setPhoto("Logo.png");
-            team.setTournament(tournamentManager.getTournamentRepository().findById(id).orElse(null));
-            teamRepository.save(team);
+            Team teamToSave = new Team(tournamentManager.getTournamentRepository().findById(id).get(), team.getName(), team.getDescription());
+            teamToSave.setPhoto("Logo.png");
+            teamRepository.save(teamToSave);
             return true;
         }
         else {
