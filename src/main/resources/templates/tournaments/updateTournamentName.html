@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>Update team</title>
+</head>
+<body>
+
+<div class="container mt-3">
+
+    <form th:action="@{'/api/tournaments/update/name/save/{id}'(id=${tournament.id})}"
+          th:object="${tournament}" method="post">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th></th>
+
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td><input type="text" maxlength="100" th:field="*{name}" /></td>
+                <td><input type="submit" value="Submit" /></td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+</body>
+</html>

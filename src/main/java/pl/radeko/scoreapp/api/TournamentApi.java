@@ -61,4 +61,16 @@ public class TournamentApi {
             tournaments.delete(id);
             return new RedirectView("/api/tournaments/index");
     }
+
+    @GetMapping("/update/name/{id}")
+    public String prepareTeamForUpdateDescription(@PathVariable Long id, Model model) {
+        model.addAttribute("tournament", tournaments.findTournament(id));
+        return "/tournaments/updateTournamentName";
+    }
+
+    @PostMapping("/update/name/save/{id}")
+    public RedirectView updateTeam(@PathVariable Long id, @ModelAttribute Tournament tournament) {
+        tournaments.updateTournamentName(id, tournament.getName());
+        return new RedirectView("/api/tournaments/index");
+    }
 }

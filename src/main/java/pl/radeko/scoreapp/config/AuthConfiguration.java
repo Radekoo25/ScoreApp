@@ -36,7 +36,7 @@ public class AuthConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/", "/api/auth/login*", "/api/auth/register").permitAll()
+                .antMatchers( "/api/auth/login*", "/api/auth/register").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage("/api/auth/login")

@@ -22,6 +22,15 @@ public class TournamentManager {
         return tournamentRepository.findAll();
     }
 
+    public Tournament findTournament(Long id) {
+        return tournamentRepository.findById(id).orElse(null);
+    }
+
+    public void updateTournamentName(Long id, String name) {
+        tournamentRepository.findById(id).get().setName(name);
+        tournamentRepository.save(tournamentRepository.findById(id).get());
+    }
+
     public void delete(Long id) {
         tournamentRepository.deleteById(id);
     }
