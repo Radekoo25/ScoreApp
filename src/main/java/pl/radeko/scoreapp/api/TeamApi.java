@@ -66,6 +66,7 @@ public class TeamApi {
 
     @PostMapping("/team/add/{id}")
     public RedirectView addTeam(@PathVariable Long id, @ModelAttribute("team") @Valid Team team, Model model) {
+      
         model.addAttribute("tournament_id", id);
         if(teams.save(team, id)) {
             return new RedirectView("/api/teams/index/"+id);
@@ -85,12 +86,14 @@ public class TeamApi {
 
     @PostMapping("/team/update/description/save/{id}")
     public RedirectView updateTeam(@PathVariable Long id, @ModelAttribute Team team) {
+
         teams.updateTeamDescription(id, team.getDescription());
         return new RedirectView("/api/teams/index");
     }
 
     @PostMapping("/filldefault/{id}")
     public RedirectView saveDefaultTeams(@PathVariable Long id) {
+
         if(teams.saveDefaultTeams(id)) {
             return new RedirectView("/api/teams/index/"+id);
         }
