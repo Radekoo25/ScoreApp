@@ -12,6 +12,7 @@ import pl.radeko.scoreapp.manager.TournamentManager;
 import pl.radeko.scoreapp.repository.entity.Team;
 import pl.radeko.scoreapp.repository.entity.Tournament;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 
@@ -54,9 +55,10 @@ public class TournamentApi {
     }
 
     @GetMapping("/delete/{id}")
+    @Transactional
     public RedirectView deleteTournament(@PathVariable Long id) {
-            matchups.deleteByTournamentId(id);
             results.deleteByTournamentId(id);
+            matchups.deleteByTournamentId(id);
             teams.deleteByTournamentId(id);
             tournaments.delete(id);
             return new RedirectView("/api/tournaments/index");
