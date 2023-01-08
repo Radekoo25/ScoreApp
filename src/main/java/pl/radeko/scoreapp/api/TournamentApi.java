@@ -75,4 +75,5 @@ public class TournamentApi {
         tournaments.updateTournamentName(id, tournament.getName());
         return new RedirectView("/api/tournaments/index");
     }
+
 }
