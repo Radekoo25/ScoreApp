@@ -69,6 +69,7 @@ public class TeamManager {
         if (teamRepository.findAllByTournamentId(id).size() < numberOfTeams) {
             Team teamToSave = new Team(tournamentManager.getTournamentRepository().findById(id).get(), team.getName(), team.getDescription());
             teamToSave.setPhoto("Logo.png");
+            teamToSave.setVideo("https://www.youtube.com/embed/tgbNymZ7vqY");
             teamRepository.save(teamToSave);
             return true;
         }
@@ -77,8 +78,10 @@ public class TeamManager {
         }
     }
 
-    public void updateTeamDescription(Long id, String description) {
+    public void updateTeam(Long id, String name, String description, String video) {
+        teamRepository.findById(id).get().setName(name);
         teamRepository.findById(id).get().setDescription(description);
+        teamRepository.findById(id).get().setVideo(video);
         teamRepository.save(teamRepository.findById(id).get());
     }
 
@@ -93,6 +96,7 @@ public class TeamManager {
                 String teamName = "Drużyna" + i;
                 Team team = new Team(tournamentManager.getTournamentRepository().findById(id).get(), teamName, "--Brak--");
                 team.setPhoto("Logo.png");
+                team.setVideo("https://www.youtube.com/embed/tgbNymZ7vqY");
                 teamRepository.save(team);
             }
             return true;

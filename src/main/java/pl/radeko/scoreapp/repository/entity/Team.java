@@ -27,6 +27,8 @@ public class Team {
     private String description;
     @Column(name="photo")
     private String photo;
+    @Column(name="video")
+    private String video;
     @Column(name="division")
     @Enumerated(EnumType.STRING)
     private Group group;
@@ -37,6 +39,7 @@ public class Team {
         this.description = description;
         this.group = null;
         this.photo = null;
+        this.video = null;
     }
 
     public Team() {
@@ -79,6 +82,14 @@ public class Team {
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    public String getVideo() {
+        return video;
+    }
+
+    public void setVideo(String video) {
+        this.video = video;
     }
 
     public Group getGroup() {
