@@ -7,20 +7,19 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
-    <title>Add new team</title>
+    <title>Add new tournament</title>
 </head>
 <body>
 
 <div class="container mt-3">
 
-    <form th:action="@{'/api/teams/team/add/{id}'(id=${tournament_id})}" th:object="${team}" method="post">
-
+    <form th:action="@{/api/tournaments/tournament/add}"
+          th:object="${tournament}" method="post">
         <table class="table table-striped">
             <thead>
             <tr>
 
-                <th>Team</th>
-                <th>Description</th>
+                <th>Tournament Name</th>
                 <th></th>
 
             </tr>
@@ -30,9 +29,7 @@
             <tr>
                 <td>
                     <input type="text" maxlength="100" th:field="*{name}" />
-                    <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" />
                 </td>
-                <td><input type="text" maxlength="100" th:field="*{description}" /></td>
                 <td><input type="submit" value="Submit" /></td>
             </tr>
             </tbody>

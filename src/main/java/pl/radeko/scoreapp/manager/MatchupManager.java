@@ -49,15 +49,20 @@ public class MatchupManager {
 
         matchupRepository.save(matchup);
         resultManager.updateResult(matchup);
-        checkIfPhaseIsComplete(resultManager.getResultRepository());
+        Long id = matchup.getTeamA().getTournament().getId();
+        checkIfPhaseIsComplete(resultManager.getResultRepository(), id);
+    }
+
+    public void deleteByTournamentId(Long id) {
+        matchupRepository.deleteAllByTeamATournamentId(id);
     }
 
     public Iterable<Matchup> findAll() {
         return matchupRepository.findAll();
     }
 
-    public Iterable<Matchup> findAllByMatchupType(MatchupType matchupType) {
-        return matchupRepository.findAllByMatchupType(matchupType);
+    public Iterable<Matchup> findAllByMatchupTypeAndTournament(MatchupType matchupType, Long id) {
+        return matchupRepository.findAllByMatchupTypeAndAndTeamATournamentId(matchupType, id);
     }
 
     public Optional<Matchup> findMatchupById(Long id) {
@@ -90,11 +95,11 @@ public class MatchupManager {
      * The function fills in matchups with random values.
      * We have a mechanism here to prevent draws in the knockout stages.
      */
-    public void saveDefaultMatchups() {
+    public void saveDefaultMatchups(Long id) {
 
         Random random = new Random();
 
-        List<Matchup> matchups = StreamSupport.stream(matchupRepository.findAll().spliterator(), false)
+        List<Matchup> matchups = StreamSupport.stream(matchupRepository.findAllByTeamATournamentId(id).spliterator(), false)
                 .collect(Collectors.toList());
 
         matchups.stream().forEach(t -> {
@@ -117,15 +122,15 @@ public class MatchupManager {
     /**
      * This feature is responsible for creating empty group matchups.
      */
-    public void createGroupMatchups(TeamRepository teamRepository) {
+    public void createGroupMatchups(TeamRepository teamRepository, Long id) {
 
-        if (teamRepository.count() == numberOfTeams && matchupRepository.count() == 0) {
+        if (teamRepository.findAllByTournamentId(id).size() == numberOfTeams && matchupRepository.findAllByTeamATournamentId(id).size() == 0) {
             Group[] groups = Group.values();
             MatchupType[] matchupTypes = MatchupType.values();
 
             for (int k = 0; k < numberOfTeams / sizeOfGroup; k++) {
 
-                List<Team> teams = teamRepository.findAllByGroup(groups[k]);
+                List<Team> teams = teamRepository.findAllByGroupAndTournamentId(groups[k], id);
 
                 for (int i = 0; i <= sizeOfGroup; i++) {
                     for (int j = i + 1; j < sizeOfGroup; j++) {
@@ -144,7 +149,7 @@ public class MatchupManager {
      * This feature is responsible for creating empty phase1 matchups.
      * Based on group results.
      */
-    public void createPhase1Matchups(ResultRepository resultRepository) {
+    public void createPhase1Matchups(ResultRepository resultRepository, Long id) {
 
         int currentGroup = 0;
         Group[] groups = Group.values();
@@ -155,16 +160,16 @@ public class MatchupManager {
             temp1.setMatchupType(MatchupType.PHASE_1);
             temp1.setTeamA_score(-1);
             temp1.setTeamB_score(-1);
-            temp1.setTeamA(resultRepository.findByGroupAndPlace(groups[currentGroup], 1).getTeam());
-            temp1.setTeamB(resultRepository.findByGroupAndPlace(groups[7 - currentGroup], 2).getTeam());
+            temp1.setTeamA(resultRepository.findByGroupAndPlaceAndTeamTournamentId(groups[currentGroup], 1, id).getTeam());
+            temp1.setTeamB(resultRepository.findByGroupAndPlaceAndTeamTournamentId(groups[7 - currentGroup], 2, id).getTeam());
             matchupRepository.save(temp1);
 
             Matchup temp2 = new Matchup();
             temp2.setMatchupType(MatchupType.PHASE_1);
             temp2.setTeamA_score(-1);
             temp2.setTeamB_score(-1);
-            temp2.setTeamA(resultRepository.findByGroupAndPlace(groups[currentGroup], 2).getTeam());
-            temp2.setTeamB(resultRepository.findByGroupAndPlace(groups[7 - currentGroup], 1).getTeam());
+            temp2.setTeamA(resultRepository.findByGroupAndPlaceAndTeamTournamentId(groups[currentGroup], 2, id).getTeam());
+            temp2.setTeamB(resultRepository.findByGroupAndPlaceAndTeamTournamentId(groups[7 - currentGroup], 1, id).getTeam());
             matchupRepository.save(temp2);
 
             currentGroup++;
@@ -175,9 +180,9 @@ public class MatchupManager {
      * This function is responsible for creating empty phase2 and higher matchups.
      * Based on rules given in the recruitment task.
      */
-    public void createPhase2AndHigherMatchups(MatchupType previousPhase, MatchupType currentPhase) {
+    public void createPhase2AndHigherMatchups(MatchupType previousPhase, MatchupType currentPhase, Long id) {
 
-        List<Matchup> matchups = StreamSupport.stream(matchupRepository.findAllByMatchupType(previousPhase).spliterator(), false)
+        List<Matchup> matchups = StreamSupport.stream(matchupRepository.findAllByMatchupTypeAndAndTeamATournamentId(previousPhase, id).spliterator(), false)
                 .collect(Collectors.toList());
 
         for (int i = 0; i < matchups.size() / 2; i++) {
@@ -202,9 +207,9 @@ public class MatchupManager {
      * The function checks if any phase of the tournament has been completed.
      * Both group and knockout stages.
      */
-    private void checkIfPhaseIsComplete(ResultRepository resultRepository) {
+    private void checkIfPhaseIsComplete(ResultRepository resultRepository, Long id) {
 
-        List<Matchup> matchups = StreamSupport.stream(matchupRepository.findAll().spliterator(), false)
+        List<Matchup> matchups = StreamSupport.stream(matchupRepository.findAllByTeamATournamentId(id).spliterator(), false)
                 .collect(Collectors.toList());
         int numberOfCompletedMatchups = 0;
 
@@ -215,16 +220,16 @@ public class MatchupManager {
         }
 
         if(numberOfCompletedMatchups == groupMatchups ) {
-            createPhase1Matchups(resultRepository);
+            createPhase1Matchups(resultRepository, id);
         }
         else if(numberOfCompletedMatchups == groupMatchups + phase1Matchups) {
-            createPhase2AndHigherMatchups(MatchupType.PHASE_1, MatchupType.PHASE_2);
+            createPhase2AndHigherMatchups(MatchupType.PHASE_1, MatchupType.PHASE_2, id);
         }
         else if(numberOfCompletedMatchups == groupMatchups + phase1Matchups + phase2Matchups) {
-            createPhase2AndHigherMatchups(MatchupType.PHASE_2, MatchupType.PHASE_3);
+            createPhase2AndHigherMatchups(MatchupType.PHASE_2, MatchupType.PHASE_3, id);
         }
         else if(numberOfCompletedMatchups == groupMatchups + phase1Matchups + phase2Matchups + phase3Matchups) {
-            createPhase2AndHigherMatchups(MatchupType.PHASE_3, MatchupType.PHASE_4);
+            createPhase2AndHigherMatchups(MatchupType.PHASE_3, MatchupType.PHASE_4, id);
         }
     }
 }
