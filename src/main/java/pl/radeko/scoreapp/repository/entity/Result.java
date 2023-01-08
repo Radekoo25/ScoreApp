@@ -24,22 +24,22 @@ public class Result {
     private int draws;
     @Column(name="lost")
     private int lost;
-    @Column(name="goals_scored")
-    private int goals_scored;
-    @Column(name="goals_lost")
-    private int goals_lost;
+    @Column(name="goalsScored")
+    private int goalsScored;
+    @Column(name="goalsLost")
+    private int goalsLost;
     @Column(name="points")
     private int points;
 
-    public Result(Group group, int place, Team team, int wins, int draws, int lost, int goals_scored, int goals_lost, int points) {
+    public Result(Group group, int place, Team team, int wins, int draws, int lost, int goalsScored, int goalsLost, int points) {
         this.group = group;
         this.place = place;
         this.team = team;
         this.wins = wins;
         this.draws = draws;
         this.lost = lost;
-        this.goals_scored = goals_scored;
-        this.goals_lost = goals_lost;
+        this.goalsScored = goalsScored;
+        this.goalsLost = goalsLost;
         this.points = points;
     }
 
@@ -103,20 +103,20 @@ public class Result {
         this.lost = lost;
     }
 
-    public int getGoals_scored() {
-        return goals_scored;
+    public int getGoalsScored() {
+        return goalsScored;
     }
 
-    public void setGoals_scored(int goals_scored) {
-        this.goals_scored = goals_scored;
+    public void setGoalsScored(int goals_scored) {
+        this.goalsScored = goals_scored;
     }
 
-    public int getGoals_lost() {
-        return goals_lost;
+    public int getGoalsLost() {
+        return goalsLost;
     }
 
-    public void setGoals_lost(int goals_lost) {
-        this.goals_lost = goals_lost;
+    public void setGoalsLost(int goals_lost) {
+        this.goalsLost = goals_lost;
     }
 
     public int getPoints() {
@@ -137,8 +137,8 @@ public class Result {
                 ", wins=" + wins +
                 ", draws=" + draws +
                 ", lost=" + lost +
-                ", goals_scored=" + goals_scored +
-                ", goals_lost=" + goals_lost +
+                ", goals_scored=" + goalsScored +
+                ", goals_lost=" + goalsLost +
                 ", points=" + points +
                 '}';
     }

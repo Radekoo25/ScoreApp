@@ -12,5 +12,8 @@ import java.util.List;
 public interface MatchupRepository extends CrudRepository<Matchup, Long> {
 
     List<Matchup> findAllByMatchupType(MatchupType matchupType);
-    Matchup findByTeamAAndTeamB(Team teamA, Team teamB);
+    List<Matchup> findAllByMatchupTypeAndAndTeamATournamentId(MatchupType matchupType, Long id);
+    List<Matchup> findAllByTeamATournament(Long id);
+    List<Matchup> findAllByTeamATournamentId(Long id);
+    void deleteAllByTeamATournamentId(Long id);
 }

@@ -7,7 +7,7 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
-    <title>Main Page</title>
+    <title>Tournaments</title>
 </head>
 <body>
 
@@ -31,15 +31,58 @@
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/api/results/index}">Groups</a>
                 </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Tools</a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <form class="dropdown-item" action="#" th:action="@{/api/tournaments/tournament/add}" th:method="get">
+                                <button class="btn btn-outline-dark">Add Tournament</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>
 </nav>
 
-<h4 class="text-center">created by</h4>
-<h1 class="text-center">Radosław Zięba</h1>
+<h1 class="text-center">Tournaments</h1>
+<h4 class="text-center">List of all tournaments.</h4>
 
+<div class="container mt-3">
+    <!-- Tournaments -->
+    <table class="table table-striped">
+        <thead>
+        <tr>
 
+            <th class="text-center">Name</th>
+            <th class="text-center"></th>
+            <th class="text-center"></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="tournament: ${tournaments}">
+
+            <td class="text-center" th:text="${tournament.name}"></td>
+            <td class="text-center">
+                <form action="#" th:action="@{'/api/teams/team/update/description/{id}'(id=${tournament.id})}"
+                      th:object="${tournament}" th:method="get">
+                    <button>Change name</button>
+                </form>
+            </td>
+            <td class="text-center">
+                <form action="#" th:action="@{'/api/tournaments/delete/{id}'(id=${tournament.id})}"
+                      th:object="${tournament}" method="get">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 

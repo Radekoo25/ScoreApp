@@ -15,7 +15,9 @@ public class Team {
     @Column(name="team_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @ManyToOne
+    @JoinColumn(name = "tournament")
+    private Tournament tournament;
     @Column(name="name")
     @NotEmpty(message = "Team name cant be empty!!")
     @Size(min = 5, max =250)
@@ -28,14 +30,8 @@ public class Team {
     @Enumerated(EnumType.STRING)
     private Group group;
 
-    public Team(String name, String description, String photo) {
-        this.name = name;
-        this.description = description;
-        this.photo = null;
-        this.group = null;
-    }
-
-    public Team(String name, String description) {
+    public Team(Tournament tournament, String name, String description) {
+        this.tournament = tournament;
         this.name = name;
         this.description = description;
         this.group = null;
@@ -51,6 +47,14 @@ public class Team {
     }
 
     public void setId(Long id) {this.id = id;}
+
+    public Tournament getTournament() {
+        return tournament;
+    }
+
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
+    }
 
     public String getName() {
         return name;
