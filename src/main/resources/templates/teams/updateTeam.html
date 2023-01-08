@@ -13,7 +13,7 @@
 
 <div class="container mt-3">
 
-    <form th:action="@{'/api/teams/team/update/description/save/{id}'(id=${team.id})}"
+    <form th:action="@{'/api/teams/team/update/save/{id}'(id=${team.id})}"
           th:object="${team}" method="post">
         <table class="table table-striped">
             <thead>
@@ -21,6 +21,7 @@
 
                 <th>Team</th>
                 <th>Description</th>
+                <th>Link</th>
                 <th></th>
 
             </tr>
@@ -28,8 +29,9 @@
 
             <tbody>
             <tr>
-                <td th:text="${team.name}"></td>
+                <td><input type="text" maxlength="100" th:field="*{name}" /></td>
                 <td><input type="text" maxlength="100" th:field="*{description}" /></td>
+                <td><input type="text" maxlength="100" th:field="*{video}" /></td>
                 <td><input type="submit" value="Submit" /></td>
             </tr>
             </tbody>

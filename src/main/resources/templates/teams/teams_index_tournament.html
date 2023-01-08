@@ -98,13 +98,13 @@
                      class="img-fluid rounded-circle" alt="ImageUploaded"/>
             </td>
             <td class="text-center">
-                <iframe class="responsive-iframe" src="https://www.youtube.com/embed/tgbNymZ7vqY">
+                <iframe class="responsive-iframe" th:src="@{${team.video}}">
                 </iframe>
             </td>
             <td class="text-center">
-                <form action="#" th:action="@{'/api/teams/team/update/description/{id}'(id=${team.id})}"
+                <form action="#" th:action="@{'/api/teams/team/update/{id}'(id=${team.id})}"
                       th:object="${team}" th:method="get">
-                    <button>Update Description</button>
+                    <button>Update</button>
                 </form>
             </td>
             <td class="text-center">
