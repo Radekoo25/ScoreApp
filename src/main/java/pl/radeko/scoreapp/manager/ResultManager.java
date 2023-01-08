@@ -98,16 +98,11 @@ public class ResultManager {
 
         if(matchup.getMatchupType().ordinal() < MatchupType.PHASE_1.ordinal())
         {
-            Result tempA = new Result();
-            Result tempB = new Result();
 
-            tempA = updateResultA(matchup);
-            tempB = updateResultB(matchup);
+            updateResultA(matchup);
+            updateResultB(matchup);
 
-            save(tempA);
-            save(tempB);
-
-            setPlaceInGroup(tempA.getGroup(), matchup.getTeamA().getTournament().getId());
+            setPlaceInGroup(matchup.getTeamA().getGroup(), matchup.getTeamA().getTournament().getId());
         }
     }
 
@@ -119,76 +114,59 @@ public class ResultManager {
     /**
      * Updates result of first team from given matchup.
      */
-    private Result updateResultA(Matchup matchup) {
+    private void updateResultA(Matchup matchup) {
+        Result result = resultRepository.findByTeamId(matchup.getTeamA().getId());
 
-        Result temp = new Result();
+        int goalRatioInMatchup = matchup.getTeamA_score() - matchup.getTeamB_score();
+        int actualPoints = result.getPoints();
+        int actualGoalScored = result.getGoalsScored();
+        int actualGoalLost = result.getGoalsLost();
+        int actualLost = result.getLost();
+        int actualDraws = result.getDraws();
+        int actualWins = result.getWins();
 
-        int goalRatioInMatchup = matchup.getTeamA_score()-matchup.getTeamB_score();
-        int actualPoints = resultRepository.findById(matchup.getTeamA().getId()).get().getPoints();
-        int actualGoalScored = resultRepository.findById(matchup.getTeamA().getId()).get().getGoalsScored();
-        int actualGoalLost = resultRepository.findById(matchup.getTeamA().getId()).get().getGoalsLost();
-        int actualLost = resultRepository.findById(matchup.getTeamA().getId()).get().getLost();
-        int actualDraws = resultRepository.findById(matchup.getTeamA().getId()).get().getDraws();
-        int actualWins = resultRepository.findById(matchup.getTeamA().getId()).get().getWins();
+        result.setPoints(checkWin(goalRatioInMatchup) + actualPoints);
+        result.setGoalsScored(matchup.getTeamA_score() + actualGoalScored);
+        result.setGoalsLost(matchup.getTeamB_score() + actualGoalLost);
 
-        temp.setId(matchup.getTeamA().getId());
-        temp.setGroup(matchup.getTeamA().getGroup());
-        temp.setTeam(matchup.getTeamA());
-        temp.setWins(actualWins);
-        temp.setDraws(actualDraws);
-        temp.setLost(actualLost);
-        temp.setPoints(checkWin(goalRatioInMatchup) + actualPoints);
-        temp.setGoalsScored(matchup.getTeamA_score() + actualGoalScored);
-        temp.setGoalsLost(matchup.getTeamB_score() + actualGoalLost);
-
-        if(goalRatioInMatchup > 0) {
-            temp.setWins(actualWins + 1);
+        if (goalRatioInMatchup > 0) {
+            result.setWins(actualWins + 1);
         } else if (goalRatioInMatchup == 0) {
-            temp.setDraws(actualDraws + 1);
-        }
-        else {
-            temp.setLost(actualLost + 1);
+            result.setDraws(actualDraws + 1);
+        } else {
+            result.setLost(actualLost + 1);
         }
 
-        return temp;
+        resultRepository.save(result);
     }
 
     /**
      * Updates result of second team from given matchup.
      */
-    private Result updateResultB(Matchup matchup) {
+    private void updateResultB(Matchup matchup) {
+        Result result = resultRepository.findByTeamId(matchup.getTeamB().getId());
 
-        Result temp = new Result();
+        int goalRatioInMatchup = matchup.getTeamB_score() - matchup.getTeamA_score();
+        int actualPoints = result.getPoints();
+        int actualGoalScored = result.getGoalsScored();
+        int actualGoalLost = result.getGoalsLost();
+        int actualLost = result.getLost();
+        int actualDraws = result.getDraws();
+        int actualWins = result.getWins();
 
-        int goalRatioInMatchup = matchup.getTeamB_score()-matchup.getTeamA_score();
-        int actualPoints = resultRepository.findById(matchup.getTeamB().getId()).get().getPoints();
-        int actualGoalScored = resultRepository.findById(matchup.getTeamB().getId()).get().getGoalsScored();
-        int actualGoalLost = resultRepository.findById(matchup.getTeamB().getId()).get().getGoalsLost();
-        int actualLost = resultRepository.findById(matchup.getTeamB().getId()).get().getLost();
-        int actualDraws = resultRepository.findById(matchup.getTeamB().getId()).get().getDraws();
-        int actualWins = resultRepository.findById(matchup.getTeamB().getId()).get().getWins();
+        result.setPoints(checkWin(goalRatioInMatchup) + actualPoints);
+        result.setGoalsScored(matchup.getTeamB_score() + actualGoalScored);
+        result.setGoalsLost(matchup.getTeamA_score() + actualGoalLost);
 
-        temp.setId(matchup.getTeamB().getId());
-        temp.setGroup(matchup.getTeamB().getGroup());
-        temp.setTeam(matchup.getTeamB());
-        temp.setWins(actualWins);
-        temp.setDraws(actualDraws);
-        temp.setLost(actualLost);
-        temp.setPoints(checkWin(goalRatioInMatchup) + actualPoints);
-        temp.setGoalsScored(matchup.getTeamB_score() + actualGoalScored);
-        temp.setGoalsLost(matchup.getTeamA_score() + actualGoalLost);
-
-        if(goalRatioInMatchup > 0) {
-            temp.setWins(actualWins + 1);
-        }
-        else if (goalRatioInMatchup == 0) {
-            temp.setDraws(actualDraws + 1);
-        }
-        else {
-            temp.setLost(actualLost + 1);
+        if (goalRatioInMatchup > 0) {
+            result.setWins(actualWins + 1);
+        } else if (goalRatioInMatchup == 0) {
+            result.setDraws(actualDraws + 1);
+        } else {
+            result.setLost(actualLost + 1);
         }
 
-        return temp;
+        resultRepository.save(result);
     }
 
     /**

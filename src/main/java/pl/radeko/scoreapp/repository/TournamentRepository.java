@@ -13,4 +13,5 @@ import java.util.Optional;
 public interface TournamentRepository extends CrudRepository<Tournament, Long> {
     List<Tournament> findAll();
     void deleteById(Long id);
+
 }
