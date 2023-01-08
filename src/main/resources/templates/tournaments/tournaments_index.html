@@ -67,7 +67,7 @@
 
             <td class="text-center" th:text="${tournament.name}"></td>
             <td class="text-center">
-                <form action="#" th:action="@{'/api/teams/team/update/description/{id}'(id=${tournament.id})}"
+                <form action="#" th:action="@{'/api/tournaments/update/name/{id}'(id=${tournament.id})}"
                       th:object="${tournament}" th:method="get">
                     <button>Change name</button>
                 </form>
