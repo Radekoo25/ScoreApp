@@ -32,6 +32,19 @@
                     <a class="nav-link" th:href="@{/api/results/index}">Groups</a>
                 </li>
 
+                </li>
+
+                <li class="nav-item nav-divider"></li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Tournament</a>
+                    <ul class="dropdown-menu">
+                        <li th:each="tournament : ${tournaments}">
+                            <a class="dropdown-item" th:href="@{/api/teams/index/{id}(id=${tournament.id})}" th:text="${tournament.name}"></a>
+                        </li>
+                    </ul>
+                </li>
+
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Tools</a>
                     <ul class="dropdown-menu">
@@ -51,18 +64,6 @@
                             </form>
                         </li>
                     </ul>
-                </li>
-
-                <li class="nav-item nav-divider"></li>
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Tournament</a>
-                    <ul class="dropdown-menu">
-                        <li th:each="tournament : ${tournaments}">
-                            <a class="dropdown-item" th:href="@{/api/teams/index/{id}(id=${tournament.id})}" th:text="${tournament.name}"></a>
-                        </li>
-                    </ul>
-                </li>
             </ul>
         </div>
     </div>

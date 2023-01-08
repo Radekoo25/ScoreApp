@@ -1,5 +1,6 @@
 package pl.radeko.scoreapp.repository.entity;
 
+import org.hibernate.annotations.Cascade;
 import pl.radeko.scoreapp.repository.enums.Group;
 
 import javax.persistence.*;

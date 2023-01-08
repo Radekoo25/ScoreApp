@@ -33,21 +33,21 @@
                 </li>
 
                 <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Tournament</a>
+                    <ul class="dropdown-menu">
+                        <li th:each="tournament : ${tournaments}">
+                            <a class="dropdown-item" th:href="@{/api/matchups/index/{id}(id=${tournament.id})}" th:text="${tournament.name}"></a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Tools</a>
                     <ul class="dropdown-menu">
                         <li>
                             <form class="dropdown-item" action="#" th:action="@{/api/matchups/filldefaultmatchups/{id}(id=${tournament_id})}" th:method="post">
                                 <button class="btn btn-outline-dark">Default Matchups</button>
                             </form>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Tournament</a>
-                    <ul class="dropdown-menu">
-                        <li th:each="tournament : ${tournaments}">
-                            <a class="dropdown-item" th:href="@{/api/matchups/index/{id}(id=${tournament.id})}" th:text="${tournament.name}"></a>
                         </li>
                     </ul>
                 </li>
