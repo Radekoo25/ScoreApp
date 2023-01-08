@@ -77,15 +77,15 @@ public class TeamApi {
         }
     }
 
-    @GetMapping("/team/update/{id}")
-    public String prepareTeamForUpdate(@PathVariable Long id, Model model) {
+    @GetMapping("/team/update/description/{id}")
+    public String prepareTeamForUpdateDescription(@PathVariable Long id, Model model) {
         model.addAttribute("team", teams.findTeamById(id).get());
-        return "/teams/updateTeam";
+        return "/teams/updateTeamDescription";
     }
 
-    @PostMapping("/team/update/save/{id}")
+    @PostMapping("/team/update/description/save/{id}")
     public RedirectView updateTeam(@PathVariable Long id, @ModelAttribute Team team) {
-        teams.updateTeam(id, team.getName() ,team.getDescription(), team.getVideo());
+        teams.updateTeamDescription(id, team.getDescription());
         return new RedirectView("/api/teams/index");
     }
 
